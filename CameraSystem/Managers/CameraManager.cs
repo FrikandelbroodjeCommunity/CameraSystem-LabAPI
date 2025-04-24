@@ -127,7 +127,5 @@ internal sealed class CameraManager : IDisposable
 
         _watchers.Clear();
         WorkstationControllers.Clear();
-
-        GC.SuppressFinalize(this);
     }
 }
