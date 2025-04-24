@@ -104,8 +104,30 @@ internal sealed class CameraManager : IDisposable
         _watchers.Remove(watcher);
     }
 
-
     public void Dispose()
     {
+        foreach (Watcher watcher in _watchers.ToArray())
+        {
+            try
+            {
+                if (watcher.Player != null)
+                    Disconnect(watcher.Player);
+
+                if (watcher.Npc != null && watcher.Npc.IsAlive)
+                {
+                    watcher.Npc.Kill(DamageType.Unknown);
+                    NetworkServer.Destroy(watcher.Npc.GameObject);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Error disposing watcher: {e}");
+            }
+        }
+
+        _watchers.Clear();
+        WorkstationControllers.Clear();
+
+        GC.SuppressFinalize(this);
     }
 }
