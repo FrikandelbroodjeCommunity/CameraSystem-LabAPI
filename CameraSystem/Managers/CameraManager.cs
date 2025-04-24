@@ -7,6 +7,7 @@ using Exiled.API.Features.DamageHandlers;
 using InventorySystem.Items.Firearms.Attachments;
 using Mirror;
 using PlayerRoles;
+using Utils.NonAllocLINQ;
 
 namespace CameraSystem.Managers;
 internal sealed class CameraManager : IDisposable
@@ -72,19 +73,14 @@ internal sealed class CameraManager : IDisposable
         }
     }
 
-    internal bool IsWatching(Player player) => _watchers.Exists(watcher => watcher.Player == player);
-
-    internal bool IsWatching(Npc npc) => _watchers.Exists(watcher => watcher.Npc == npc);
+    internal bool IsWatching(Player player)
+    {
+        return _watchers.Any(watcher => watcher.Player == player || watcher.Npc == player);
+    }
 
     internal bool TryGetWatcher(Player player, out Watcher watcher)
     {
-        watcher = _watchers.Find(w => w.Player == player);
-        return watcher != null;
-    }
-
-    internal bool TryGetWatcher(Npc npc, out Watcher watcher)
-    {
-        watcher = _watchers.Find(w => w.Npc == npc);
+        watcher = _watchers.Find(w => w.Player == player || w.Npc == player);
         return watcher != null;
     }
 

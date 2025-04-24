@@ -21,17 +21,14 @@ internal class ServerReceiveMessagePatch
             instruction.opcode == OpCodes.Callvirt &&
             instruction.operand.ToString().Contains("ValidateReceive"));
 
-        Label continueLabel = generator.DefineLabel();
-
         newInstructions.InsertRange(index, new[]
         {
             new CodeInstruction(OpCodes.Ldarg_1),
-            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(VoiceMessage), "Speaker")),
+            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(VoiceMessage), nameof(VoiceMessage.Speaker))),
             new CodeInstruction(OpCodes.Ldloc_3),
-            new CodeInstruction(OpCodes.Ldloc_S, 5),
+            new CodeInstruction(OpCodes.Ldloc_1),
             new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ServerReceiveMessagePatch), nameof(ModifyChannel))),
-            new CodeInstruction(OpCodes.Stloc_S, 5),
-            new CodeInstruction(OpCodes.Ldloc_S, 5).WithLabels(continueLabel)
+            new CodeInstruction(OpCodes.Stloc_1)
         });
 
         for (int z = 0; z < newInstructions.Count; z++)

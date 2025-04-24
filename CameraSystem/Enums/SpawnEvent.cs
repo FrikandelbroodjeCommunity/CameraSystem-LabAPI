@@ -1,5 +1,5 @@
 ﻿namespace CameraSystem.Enums;
-public enum SpawnEvent
+public enum SpawnEvent : byte
 {
     Generated,
     RoundStarted

@@ -24,7 +24,9 @@ internal static class EventHandlers
                 Exiled.Events.Handlers.Server.RoundStarted += SpawnWorkstations;
                 break;
             default:
-                Log.Warn("");
+                Log.Warn($"Invalid spawn event type configured! " +
+                         $"Allowed values: {SpawnEvent.Generated} or {SpawnEvent.RoundStarted}. " +
+                         $"Defaulting to {SpawnEvent.Generated}.");
                 Exiled.Events.Handlers.Map.Generated += SpawnWorkstations;
                 break;
         }
@@ -36,11 +38,14 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Scp079.LockingDown += OnScp079Event;
         Exiled.Events.Handlers.Scp079.LosingSignal += OnScp079Event;
         Exiled.Events.Handlers.Scp079.RoomBlackout += OnScp079Event;
+        Exiled.Events.Handlers.Scp079.ZoneBlackout += OnScp079Event;
+        Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus += OnScp079Event;
         Exiled.Events.Handlers.Scp079.TriggeringDoor += OnScp079Event;
         Exiled.Events.Handlers.Scp079.InteractingTesla += OnScp079Event;
 
         Exiled.Events.Handlers.Player.ActivatingWorkstation += OnActivatingWorkstation;
         Exiled.Events.Handlers.Player.TriggeringTesla += OnTriggeringTesla;
+        Exiled.Events.Handlers.Player.InteractingElevator += OnInteractingElevator;
         Exiled.Events.Handlers.Player.Hurting += OnHurting;
         Exiled.Events.Handlers.Player.Left += OnLeft;
         Exiled.Events.Handlers.Player.Dying += OnDying;
@@ -58,11 +63,14 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Scp079.LockingDown -= OnScp079Event;
         Exiled.Events.Handlers.Scp079.LosingSignal -= OnScp079Event;
         Exiled.Events.Handlers.Scp079.RoomBlackout -= OnScp079Event;
+        Exiled.Events.Handlers.Scp079.ZoneBlackout -= OnScp079Event;
+        Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus -= OnScp079Event;
         Exiled.Events.Handlers.Scp079.TriggeringDoor -= OnScp079Event;
         Exiled.Events.Handlers.Scp079.InteractingTesla -= OnScp079Event;
 
         Exiled.Events.Handlers.Player.ActivatingWorkstation -= OnActivatingWorkstation;
         Exiled.Events.Handlers.Player.TriggeringTesla -= OnTriggeringTesla;
+        Exiled.Events.Handlers.Player.InteractingElevator -= OnInteractingElevator;
         Exiled.Events.Handlers.Player.Hurting -= OnHurting;
         Exiled.Events.Handlers.Player.Left -= OnLeft;
         Exiled.Events.Handlers.Player.Dying -= OnDying;
@@ -101,6 +109,14 @@ internal static class EventHandlers
     }
 
     private static void OnRecontaining(RecontainingEventArgs ev)
+    {
+        if (!CameraManager.Instance.IsWatching(ev.Player))
+            return;
+
+        ev.IsAllowed = false;
+    }
+
+    private static void OnInteractingElevator(InteractingElevatorEventArgs ev)
     {
         if (!CameraManager.Instance.IsWatching(ev.Player))
             return;
@@ -152,7 +168,7 @@ internal static class EventHandlers
 
     private static void OnScp079Event(IScp079Event ev)
     {
-        if (CameraManager.Instance.IsWatching(ev.Player))
+        if (!CameraManager.Instance.IsWatching(ev.Player))
             return;
 
         ((IDeniableEvent)ev).IsAllowed = false;
