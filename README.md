@@ -22,6 +22,9 @@ camera_system:
   is_enabled: true
   debug: false
   spawn_event: Generated # Generated or RoundStarted
+  presets:
+  - Intercom
+  - Nuke
   workstations:
   - position: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
