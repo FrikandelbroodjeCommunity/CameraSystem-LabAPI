@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using CameraSystem.Enums;
 using CameraSystem.Models;
 using Exiled.API.Interfaces;
@@ -14,11 +13,18 @@ public sealed class Config : IConfig
     [Description("Whether debug messages should be shown in the server console")]
     public bool Debug { get; set; } = false;
 
-    [Description("When the camera workstations should be spawned (Generated = during map generation, RoundStarted = when round starts)")]
+    [Description("When the camera workstations should be spawned. (Generated = during map generation, RoundStarted = when round starts)")]
     public SpawnEvent SpawnEvent { get; set; } = SpawnEvent.Generated;
 
+    [Description("Preset locations where workstations will be automatically spawned. (Intercom, Nuke)")]
+    public Preset[] Presets { get; set; } = new[]
+    {
+        Preset.Intercom,
+        Preset.Nuke
+    };
+
     [Description("List of camera workstation configurations including their positions, rotations, and scales")]
-    public List<WorkstationConfig> Workstations { get; set; } = new()
+    public WorkstationConfig[] Workstations { get; set; } = new[]
     {
         new WorkstationConfig(Vector3.zero, Vector3.zero, Vector3.one),
         new WorkstationConfig(Vector3.one, Vector3.one, Vector3.one)

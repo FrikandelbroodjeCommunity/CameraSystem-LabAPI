@@ -84,6 +84,58 @@ internal static class EventHandlers
             return;
         }
 
+        foreach (Preset preset in Plugin.Instance.Config.Presets)
+        {
+            Room targetRoom = null;
+            Vector3 localPosition = Vector3.zero;
+            Vector3 localRotation = Vector3.zero;
+            Vector3 scale = Vector3.one;
+
+            switch (preset)
+            {
+                case Preset.Intercom:
+                    targetRoom = Room.Get(RoomType.EzIntercom);
+                    localPosition = new Vector3(-5.4f, 0f, -1.8f);
+                    localRotation = new Vector3(90, 0, 0);
+                    scale = Vector3.one;
+                    break;
+
+                case Preset.Nuke:
+                    targetRoom = Room.Get(RoomType.HczNuke);
+                    localPosition = new Vector3(2f, -72.4f, 8.5f);
+                    localRotation = new Vector3(0, 0, 0);
+                    scale = Vector3.one;
+                    break;
+            }
+
+            if (targetRoom == null)
+            {
+                Log.Error($"Room for preset {preset} not found!");
+                continue;
+            }
+
+            Vector3 worldPosition = targetRoom.WorldPosition(localPosition);
+            Quaternion worldRotation = targetRoom.transform.rotation * Quaternion.Euler(localRotation);
+
+            GameObject workstation = Object.Instantiate(
+                prefab,
+                worldPosition,
+                worldRotation
+            );
+
+            workstation.transform.localScale = scale;
+            NetworkServer.Spawn(workstation);
+
+            if (!workstation.TryGetComponent(out WorkstationController workstationController))
+            {
+                Log.Error($"WorkstationController component is missing on {workstation.name}!");
+                continue;
+            }
+
+            CameraManager.Instance.WorkstationControllers.Add(workstationController);
+            Log.Debug($"Workstation for {preset} spawned in {targetRoom.Type}.");
+        }
+
         foreach (WorkstationConfig workstationConfig in Plugin.Instance.Config.Workstations)
         {
             GameObject gameObject = Object.Instantiate(
