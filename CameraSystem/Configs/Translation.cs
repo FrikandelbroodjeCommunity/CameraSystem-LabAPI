@@ -12,5 +12,4 @@ public sealed class Translation : ITranslation
 
     [Description("The message shown when a player disconnects from the camera system")]
     public string DisconnectionMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>You have disconnected from the security camera system.</b></size></color>";
-
 }

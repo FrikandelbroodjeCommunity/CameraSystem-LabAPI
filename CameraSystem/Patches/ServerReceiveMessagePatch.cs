@@ -44,10 +44,10 @@ internal class ServerReceiveMessagePatch
             if (originalChannel != VoiceChatChannel.ScpChat)
                 return originalChannel;
 
-            Player sender = Player.Get(speaker);
+            Player speakerPlayer = Player.Get(speaker);
             Player receiverPlayer = Player.Get(receiver);
 
-            if (CameraManager.Instance.IsWatching(sender) || CameraManager.Instance.IsWatching(receiverPlayer))
+            if (CameraManager.Instance.IsWatching(speakerPlayer) || CameraManager.Instance.IsWatching(receiverPlayer))
                 return VoiceChatChannel.None;
 
             return originalChannel;
