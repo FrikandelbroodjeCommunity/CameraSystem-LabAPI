@@ -16,10 +16,12 @@ public sealed class Config : IConfig
     [Description("When the camera workstations should be spawned. (Generated = during map generation, RoundStarted = when round starts)")]
     public SpawnEvent SpawnEvent { get; set; } = SpawnEvent.Generated;
 
-    [Description("Preset locations where workstations will be automatically spawned. (Intercom, Nuke)")]
+    [Description("Preset locations where workstations will be automatically spawned. (HczArmory, Intercom, Intercom2, Nuke)")]
     public Preset[] Presets { get; set; } = new[]
     {
+        Preset.HczArmory,
         Preset.Intercom,
+        Preset.Intercom2,
         Preset.Nuke
     };
 

@@ -13,7 +13,7 @@ A plugin that allows players to connect to the facility's security camera system
 ## Installation
 
 1. Place the `CameraSystem.dll` in your `Exiled/Plugins` folder
-2. Configure the plugin in `Exiled/Configs`
+2. Configure the plugin in `Exiled/Configs/camera_system`
 
 ## Configuration
 
@@ -23,13 +23,42 @@ camera_system:
   debug: false
   spawn_event: Generated # Generated or RoundStarted
   presets:
+  - HczArmory
   - Intercom
+  - Intercom2
   - Nuke
   workstations:
   - position: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 1, y: 1, z: 1}
 ```
+
+## Preset Locations
+
+Here are the default preset locations with screenshots:
+
+<table>
+  <tr>
+    <td align="center">
+      <img src=".github/images/presets/HczArmory.png" alt="HczArmory Workstation" style="max-width:100%; height:auto;"><br>
+      HczArmory preset
+    </td>
+    <td align="center">
+      <img src=".github/images/presets/Nuke.png" alt="Nuke Workstation" style="max-width:100%; height:auto;"><br>
+      Nuke preset
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src=".github/images/presets/Intercom.png" alt="Intercom Workstation" style="max-width:100%; height:auto;"><br>
+      Intercom preset
+    </td>
+    <td align="center">
+      <img src=".github/images/presets/Intercom2.png" alt="Intercom2 Workstation" style="max-width:100%; height:auto;"><br>
+      Intercom2 preset
+    </td>
+  </tr>
+</table>
 
 ## Usage
 
