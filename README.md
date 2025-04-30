@@ -100,11 +100,11 @@ Here are the default preset locations with screenshots:
   <tr>
     <td align="center">
       <img src=".github/images/presets/Scp914.png" alt="Scp914 Workstation" style="max-width:100%; height:auto;"><br>
-      Intercom preset
+      Scp914 preset
     </td>
     <td align="center">
       <img src=".github/images/presets/Scp9142.png" alt="Scp9142 Workstation" style="max-width:100%; height:auto;"><br>
-      Intercom2 preset
+      Scp9142 preset
     </td>
   </tr>
 </table>
