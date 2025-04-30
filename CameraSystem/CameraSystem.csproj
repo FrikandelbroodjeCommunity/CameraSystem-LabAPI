@@ -92,11 +92,11 @@
     <ItemGroup>
         <Compile Include="Configs\Config.cs" />
         <Compile Include="Configs\Translation.cs" />
-        <Compile Include="Enums\Preset.cs" />
         <Compile Include="Enums\SpawnEvent.cs" />
         <Compile Include="EventHandlers.cs" />
         <Compile Include="Managers\CameraManager.cs" />
         <Compile Include="Models\PlayerSnapshot.cs" />
+        <Compile Include="Models\PresetConfig.cs" />
         <Compile Include="Models\Watcher.cs" />
         <Compile Include="Models\WorkstationConfig.cs" />
         <Compile Include="Patches\HumanRoleTeamPatch.cs" />

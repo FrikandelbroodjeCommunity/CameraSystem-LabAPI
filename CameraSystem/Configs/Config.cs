@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using CameraSystem.Enums;
 using CameraSystem.Models;
+using Exiled.API.Enums;
 using Exiled.API.Interfaces;
 using UnityEngine;
 
@@ -16,13 +17,15 @@ public sealed class Config : IConfig
     [Description("When the camera workstations should be spawned. (Generated = during map generation, RoundStarted = when round starts)")]
     public SpawnEvent SpawnEvent { get; set; } = SpawnEvent.Generated;
 
-    [Description("Preset locations where workstations will be automatically spawned. (HczArmory, Intercom, Intercom2, Nuke)")]
-    public Preset[] Presets { get; set; } = new[]
+    [Description("Preset locations where workstations will be automatically spawned")]
+    public PresetConfig[] PresetConfigs { get; set; } = new[]
     {
-        Preset.HczArmory,
-        Preset.Intercom,
-        Preset.Intercom2,
-        Preset.Nuke
+        new PresetConfig(RoomType.HczArmory, new Vector3(1.1f, 0f, 2.1f), new Vector3(0f, 180f, 0f), Vector3.one),
+        new PresetConfig(RoomType.EzIntercom, new Vector3(-5.4f, 0f, -1.8f), Vector3.zero, Vector3.one),
+        new PresetConfig(RoomType.EzIntercom, new Vector3(-6.9f, -5.8f, 1.2f), new Vector3(0f, 90f, 0f), new Vector3(1f, 1f, 0.7f)),
+        new PresetConfig(RoomType.HczNuke, new Vector3(2f, -72.4f, 8.5f), Vector3.zero, Vector3.one),
+        new PresetConfig(RoomType.Lcz914, new Vector3(-1.9f, 0f, 5.5f), new Vector3(0f, 90f, 0f), Vector3.one),
+        new PresetConfig(RoomType.Lcz914, new Vector3(-6.2f, 0f, 3.1f), new Vector3(0f, 180f, 0f), Vector3.one)
     };
 
     [Description("List of camera workstation configurations including their positions, rotations, and scales")]

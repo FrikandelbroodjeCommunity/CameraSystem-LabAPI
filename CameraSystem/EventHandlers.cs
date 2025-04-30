@@ -83,56 +83,16 @@ internal static class EventHandlers
             return;
         }
 
-        Log.Debug($"Starting workstation spawn process. Found {Plugin.Instance.Config.Presets.Length} presets and " +
-                  $"{Plugin.Instance.Config.Workstations.Length} custom workstations to spawn.");
-        foreach (Preset preset in Plugin.Instance.Config.Presets)
+        Log.Debug($"Starting workstation spawn process. Found {Plugin.Instance.Config.PresetConfigs.Length} presets " +
+                  $"and {Plugin.Instance.Config.Workstations.Length} custom workstations to spawn.");
+        foreach (PresetConfig presetConfig in Plugin.Instance.Config.PresetConfigs)
         {
-            Room targetRoom;
-            Vector3 localPosition;
-            Vector3 localRotation;
-            Vector3 scale;
+            Room targetRoom = Room.Get(presetConfig.RoomType);
 
-            switch (preset)
-            {
-                case Preset.HczArmory:
-                    targetRoom = Room.Get(RoomType.HczArmory);
-                    localPosition = new Vector3(1.1f, 0f, 2.1f);
-                    localRotation = new Vector3(0f, 180f, 0f);
-                    scale = Vector3.one;
-                    break;
-                case Preset.Intercom:
-                    targetRoom = Room.Get(RoomType.EzIntercom);
-                    localPosition = new Vector3(-5.4f, 0f, -1.8f);
-                    localRotation = Vector3.zero;
-                    scale = Vector3.one;
-                    break;
-                case Preset.Intercom2:
-                    targetRoom = Room.Get(RoomType.EzIntercom);
-                    localPosition = new Vector3(-6.9f, -5.8f, 1.2f);
-                    localRotation = new Vector3(0f, 90f, 0f);
-                    scale = new Vector3(1f, 1f, 0.7f);
-                    break;
-                case Preset.Nuke:
-                    targetRoom = Room.Get(RoomType.HczNuke);
-                    localPosition = new Vector3(2f, -72.4f, 8.5f);
-                    localRotation = Vector3.zero;
-                    scale = Vector3.one;
-                    break;
-                default:
-                    Log.Warn($"Unknown preset type \"{preset}\". Skipping...");
-                    continue;
-            }
-
-            if (targetRoom == null)
-            {
-                Log.Warn($"Failed to find room for preset \"{preset}\". Skipping...");
-                continue;
-            }
-
-            Vector3 worldPosition = targetRoom.WorldPosition(localPosition);
-            Quaternion worldRotation = targetRoom.transform.rotation * Quaternion.Euler(localRotation);
-
-            SpawnWorkstation(prefab, worldPosition, worldRotation, scale);
+            SpawnWorkstation(prefab,
+                targetRoom.WorldPosition(presetConfig.LocalPosition),
+                targetRoom.transform.rotation * Quaternion.Euler(presetConfig.LocalRotation),
+                presetConfig.Scale);
         }
 
         foreach (WorkstationConfig workstationConfig in Plugin.Instance.Config.Workstations)
