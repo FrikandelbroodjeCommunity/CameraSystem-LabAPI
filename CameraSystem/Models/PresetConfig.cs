@@ -21,7 +21,10 @@ public sealed class PresetConfig
     {
     }
 
-    public PresetConfig(RoomType roomType, Vector3 localPosition, Vector3 localRotation, Vector3 scale)
+    public PresetConfig(RoomType roomType,
+        Vector3 localPosition,
+        Vector3 localRotation,
+        Vector3 scale)
     {
         RoomType = roomType;
         LocalPosition = localPosition;

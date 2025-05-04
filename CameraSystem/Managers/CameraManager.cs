@@ -4,9 +4,12 @@ using CameraSystem.Models;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.API.Features.DamageHandlers;
+using Exiled.API.Features.Roles;
 using InventorySystem.Items.Firearms.Attachments;
+using MEC;
 using Mirror;
 using PlayerRoles;
+using UnityEngine;
 using Utils.NonAllocLINQ;
 
 namespace CameraSystem.Managers;
@@ -14,7 +17,8 @@ internal sealed class CameraManager : IDisposable
 {
     internal static CameraManager Instance => Plugin.Instance.CameraManager;
 
-    public List<WorkstationController> WorkstationControllers { get; set; } = new();
+    internal bool IsCameraSystemEnabled { get; private set; } = Plugin.Instance.Config.IsCameraSystemEnabledByDefault;
+    internal List<WorkstationController> WorkstationControllers { get; set; } = new();
 
     private readonly List<Watcher> _watchers = new();
 
@@ -38,24 +42,24 @@ internal sealed class CameraManager : IDisposable
 
         try
         {
-            player.Role.Set(watcher.PlayerSnapshot.Role, RoleSpawnFlags.None);
-            player.Position = watcher.PlayerSnapshot.Position;
-            player.Emotion = watcher.PlayerSnapshot.Emotion;
-            player.ArtificialHealth = watcher.PlayerSnapshot.ArtificialHealth;
-            player.Health = watcher.PlayerSnapshot.Health;
-            player.SetAmmo(watcher.PlayerSnapshot.Ammo);
+            watcher.Player.Role.Set(watcher.PlayerSnapshot.Role, RoleSpawnFlags.None);
+            watcher.Player.Position = watcher.PlayerSnapshot.Position;
+            watcher.Player.Emotion = watcher.PlayerSnapshot.Emotion;
+            watcher.Player.ArtificialHealth = watcher.PlayerSnapshot.ArtificialHealth;
+            watcher.Player.Health = watcher.PlayerSnapshot.Health;
+            watcher.Player.SetAmmo(watcher.PlayerSnapshot.Ammo);
 
             foreach (KeyValuePair<EffectType, (byte Intensity, float Duration)> kvp in watcher.PlayerSnapshot.ActiveEffects)
             {
-                player.EnableEffect(kvp.Key, kvp.Value.Intensity, kvp.Value.Duration);
+                watcher.Player.EnableEffect(kvp.Key, kvp.Value.Intensity, kvp.Value.Duration);
             }
 
             if (damageHandler != null && player.IsAlive)
             {
-                player.Hurt(damageHandler);
+                watcher.Player.Hurt(damageHandler);
             }
 
-            player.ShowHint(Plugin.Instance.Translation.DisconnectionMessage);
+            watcher.Player.ShowHint(Plugin.Instance.Translation.DisconnectionMessage);
         }
         catch (Exception e)
         {
@@ -70,6 +74,27 @@ internal sealed class CameraManager : IDisposable
             }
 
             _watchers.Remove(watcher);
+        }
+    }
+
+    internal void Enable() => IsCameraSystemEnabled = true;
+
+    internal void Disable()
+    {
+        IsCameraSystemEnabled = false;
+
+        foreach (Watcher watcher in _watchers.ToArray())
+        {
+            if (watcher.Player.Role is not Scp079Role scp079Role)
+            {
+                ForceDisconnect(watcher.Player);
+                continue;
+            }
+
+            scp079Role.LoseSignal(3f);
+            watcher.Player.ShowHint(Plugin.Instance.Translation.CameraSystemDisabledMessage);
+
+            Timing.CallDelayed(3f, () => Disconnect(watcher.Player));
         }
     }
 
@@ -98,6 +123,22 @@ internal sealed class CameraManager : IDisposable
         }
 
         _watchers.Remove(watcher);
+    }
+
+    internal void CreateWorkstation(GameObject prefab, Vector3 position, Quaternion rotation, Vector3 scale)
+    {
+        GameObject workstation = UnityEngine.Object.Instantiate(prefab, position, rotation);
+        workstation.transform.localScale = scale;
+        NetworkServer.Spawn(workstation);
+
+        if (!workstation.TryGetComponent(out WorkstationController workstationController))
+        {
+            Log.Error($"WorkstationController missing on spawned workstation (ID: {workstation.GetInstanceID()}).");
+            return;
+        }
+
+        WorkstationControllers.Add(workstationController);
+        Log.Debug($"Successfully spawned workstation (ID: {workstation.GetInstanceID()}).");
     }
 
     public void Dispose()

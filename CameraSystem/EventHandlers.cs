@@ -6,9 +6,11 @@ using Exiled.API.Features;
 using Exiled.Events.EventArgs.Interfaces;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Scp079;
-using InventorySystem.Items.Firearms.Attachments;
+using LabApi.Events.Arguments.Interfaces;
 using Mirror;
+using PlayerRoles;
 using UnityEngine;
+using VoiceChat;
 
 namespace CameraSystem;
 internal static class EventHandlers
@@ -35,7 +37,6 @@ internal static class EventHandlers
 
         Exiled.Events.Handlers.Scp079.GainingExperience += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.LockingDown += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.LosingSignal += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.RoomBlackout += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.ZoneBlackout += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus += OnPlayerEvent;
@@ -46,8 +47,12 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Player.TriggeringTesla += OnPlayerEvent;
         Exiled.Events.Handlers.Player.InteractingElevator += OnPlayerEvent;
         Exiled.Events.Handlers.Player.Hurting += OnHurting;
+        Exiled.Events.Handlers.Player.Handcuffing += OnHandcuffing;
         Exiled.Events.Handlers.Player.Left += OnLeft;
         Exiled.Events.Handlers.Player.Dying += OnDying;
+
+        LabApi.Events.Handlers.PlayerEvents.ReceivingVoiceMessage += OnVoiceChatting;
+        LabApi.Events.Handlers.PlayerEvents.SendingVoiceMessage += OnVoiceChatting;
     }
 
     internal static void Unregister()
@@ -60,7 +65,6 @@ internal static class EventHandlers
 
         Exiled.Events.Handlers.Scp079.GainingExperience -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.LockingDown -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.LosingSignal -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.RoomBlackout -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.ZoneBlackout -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus -= OnPlayerEvent;
@@ -71,8 +75,12 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Player.TriggeringTesla -= OnPlayerEvent;
         Exiled.Events.Handlers.Player.InteractingElevator -= OnPlayerEvent;
         Exiled.Events.Handlers.Player.Hurting -= OnHurting;
+        Exiled.Events.Handlers.Player.Handcuffing -= OnHandcuffing;
         Exiled.Events.Handlers.Player.Left -= OnLeft;
         Exiled.Events.Handlers.Player.Dying -= OnDying;
+
+        LabApi.Events.Handlers.PlayerEvents.ReceivingVoiceMessage -= OnVoiceChatting;
+        LabApi.Events.Handlers.PlayerEvents.SendingVoiceMessage -= OnVoiceChatting;
     }
 
     private static void SpawnWorkstations()
@@ -85,41 +93,35 @@ internal static class EventHandlers
 
         Log.Debug($"Starting workstation spawn process. Found {Plugin.Instance.Config.PresetConfigs.Length} presets " +
                   $"and {Plugin.Instance.Config.Workstations.Length} custom workstations to spawn.");
+
         foreach (PresetConfig presetConfig in Plugin.Instance.Config.PresetConfigs)
         {
             Room targetRoom = Room.Get(presetConfig.RoomType);
+            if (targetRoom == null)
+            {
+                Log.Warn($"Room {presetConfig.RoomType} not found for preset workstation.");
+                continue;
+            }
 
-            SpawnWorkstation(prefab,
+            CameraManager.Instance.CreateWorkstation(
+                prefab,
                 targetRoom.WorldPosition(presetConfig.LocalPosition),
                 targetRoom.transform.rotation * Quaternion.Euler(presetConfig.LocalRotation),
-                presetConfig.Scale);
+                presetConfig.Scale
+            );
         }
 
         foreach (WorkstationConfig workstationConfig in Plugin.Instance.Config.Workstations)
         {
-            SpawnWorkstation(prefab,
+            CameraManager.Instance.CreateWorkstation(
+                prefab,
                 workstationConfig.Position,
                 Quaternion.Euler(workstationConfig.Rotation),
-                workstationConfig.Scale);
+                workstationConfig.Scale
+            );
         }
 
-        Log.Debug($"Successfully spawned {CameraManager.Instance.WorkstationControllers.Count} workstations in total.");
-    }
-
-    private static void SpawnWorkstation(GameObject prefab, Vector3 position, Quaternion rotation, Vector3 scale)
-    {
-        GameObject workstation = Object.Instantiate(prefab, position, rotation);
-        workstation.transform.localScale = scale;
-        NetworkServer.Spawn(workstation);
-
-        if (!workstation.TryGetComponent(out WorkstationController workstationController))
-        {
-            Log.Error($"WorkstationController missing on spawned workstation (ID: {workstation.GetInstanceID()}).");
-            return;
-        }
-
-        CameraManager.Instance.WorkstationControllers.Add(workstationController);
-        Log.Debug($"Successfully spawned workstation (ID: {workstation.GetInstanceID()}).");
+        Log.Debug($"Successfully spawned {Plugin.Instance.Config.PresetConfigs.Length + Plugin.Instance.Config.Workstations.Length} workstations in total.");
     }
 
     private static void OnActivatingWorkstation(ActivatingWorkstationEventArgs ev)
@@ -128,6 +130,12 @@ internal static class EventHandlers
             return;
 
         ev.IsAllowed = false;
+
+        if (!CameraManager.Instance.IsCameraSystemEnabled)
+        {
+            ev.Player.ShowHint(Plugin.Instance.Translation.CameraSystemDisabledMessage);
+            return;
+        }
 
         CameraManager.Instance.Connect(ev.Player);
     }
@@ -156,7 +164,7 @@ internal static class EventHandlers
         CameraManager.Instance.Disconnect(ev.Player);
     }
 
-    private static void OnPlayerEvent(IPlayerEvent ev)
+    private static void OnPlayerEvent(Exiled.Events.EventArgs.Interfaces.IPlayerEvent ev)
     {
         if (!CameraManager.Instance.IsWatching(ev.Player))
             return;
@@ -166,15 +174,20 @@ internal static class EventHandlers
 
     private static void OnHurting(HurtingEventArgs ev)
     {
-        Npc npc = Npc.Get(ev.Player.ReferenceHub);
-        if (npc == null || !CameraManager.Instance.IsWatching(npc))
-            return;
-
-        ev.IsAllowed = false;
-
-        if (CameraManager.Instance.TryGetWatcher(npc, out Watcher watcher))
+        if (CameraManager.Instance.TryGetWatcher(ev.Player, out Watcher watcher) && ev.Player == watcher.Npc)
         {
             CameraManager.Instance.Disconnect(watcher.Player, ev.DamageHandler);
+            ev.IsAllowed = false;
+        }
+    }
+
+    private static void OnHandcuffing(HandcuffingEventArgs ev)
+    {
+        if (CameraManager.Instance.TryGetWatcher(ev.Target, out Watcher watcher) && ev.Target == watcher.Npc)
+        {
+            CameraManager.Instance.Disconnect(watcher.Player);
+            watcher.Player.Handcuff(ev.Player);
+            ev.IsAllowed = false;
         }
     }
 
@@ -184,5 +197,12 @@ internal static class EventHandlers
             return;
 
         CameraManager.Instance.ForceDisconnect(ev.Player);
+    }
+
+    private static void OnVoiceChatting(LabApi.Events.Arguments.Interfaces.IPlayerEvent ev)
+    {
+        if (CameraManager.Instance.IsWatching(Player.Get(ev.Player)) &&
+            ((IVoiceMessageEvent)ev).Message.Channel == VoiceChatChannel.ScpChat)
+            ((ICancellableEvent)ev).IsAllowed = false;
     }
 }

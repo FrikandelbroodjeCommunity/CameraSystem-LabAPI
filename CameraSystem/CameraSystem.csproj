@@ -4,7 +4,7 @@
             Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
         <ProjectGuid>{7843CF86-2D81-4233-B8ED-8D071E9071F2}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -15,13 +15,13 @@
         <LangVersion>default</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-      <DebugType>embedded</DebugType>
-      <Optimize>true</Optimize>
-      <DefineConstants>TRACE</DefineConstants>
-      <ErrorReport>prompt</ErrorReport>
-      <WarningLevel>4</WarningLevel>
-      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      <OutputPath>bin\Release\</OutputPath>
+        <DebugType>embedded</DebugType>
+        <Optimize>true</Optimize>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <OutputPath>bin\Release\</OutputPath>
         <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
@@ -32,7 +32,7 @@
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      <OutputPath>bin\Debug\</OutputPath>
+        <OutputPath>bin\Debug\</OutputPath>
         <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
     <ItemGroup>
@@ -41,6 +41,9 @@
         </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\ExMod.Exiled.9.6.0-beta8\lib\net48\Assembly-CSharp-Publicized.dll</HintPath>
+        </Reference>
+        <Reference Include="Assembly-CSharp-firstpass">
+          <HintPath>$(EXILED_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
         </Reference>
         <Reference Include="CommandSystem.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\ExMod.Exiled.9.6.0-beta8\lib\net48\CommandSystem.Core.dll</HintPath>
@@ -90,6 +93,10 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Commands\CameraSystemParentCommand.cs" />
+        <Compile Include="Commands\ToggleWorkstationUsage.cs" />
+        <Compile Include="Commands\Disconnect.cs" />
+        <Compile Include="Commands\Toggle.cs" />
         <Compile Include="Configs\Config.cs" />
         <Compile Include="Configs\Translation.cs" />
         <Compile Include="Enums\SpawnEvent.cs" />
@@ -102,13 +109,12 @@
         <Compile Include="Patches\HumanRoleTeamPatch.cs" />
         <Compile Include="Patches\RolesUtilsGetTeamPatch.cs" />
         <Compile Include="Patches\Scp079ScanningPossiblePatch.cs" />
-        <Compile Include="Patches\ServerReceiveMessagePatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>
-      <None Include="App.config" />
-      <None Include="packages.config" />
+        <None Include="App.config" />
+        <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

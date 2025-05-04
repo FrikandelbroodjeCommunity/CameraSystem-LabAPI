@@ -12,4 +12,60 @@ public sealed class Translation : ITranslation
 
     [Description("The message shown when a player disconnects from the camera system")]
     public string DisconnectionMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>You have disconnected from the security camera system.</b></size></color>";
+
+    [Description("The message shown when a player connects but the camera system is disabled")]
+    public string CameraSystemDisabledMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>Unable to establish connection...</color>\n<color=#C50000>ERROR: Camera network unreachable. System currently disabled.</color></b></size>";
+
+    // Parent command messages
+    [Description("Description for the parent camera system command")]
+    public string CameraSystemCommandDescription { get; set; } = "Parent command for managing the camera system";
+
+    [Description("The message shown when executing the parent command without subcommands")]
+    public string ParentCommandHeader { get; set; } = "Please enter a valid subcommand:";
+
+    [Description("Format for listing available commands (command, aliases, description)")]
+    public string ParentCommandFormat { get; set; } = "\n\n<color=FAFF86><b>- {0} ({1})</b></color>\n<color=white>{2}</color>";
+
+    // Shared
+    [Description("Message shown when player lacks permission for the command")]
+    public string NoPermission { get; set; } = "You do not have permission to execute this command. Required permission: {0}";
+
+    [Description("Message shown when command for players used not by player")]
+    public string NotPlayer { get; set; } = "You must be a player to use this command!";
+
+    [Description("Message shown when no valid players found")]
+    public string DisconnectNoPlayersFound { get; set; } = "No valid players found!";
+
+    // ToggleWorkstationUsage command messages
+    [Description("Description for the toggle workstation usage command")]
+    public string ToggleWorkstationUsageDescription { get; set; } = "Toggles workstation in/out of the managed list and provides preset data";
+
+    [Description("Message shown when no workstation is found in view")]
+    public string NoWorkstationFound { get; set; } = "No workstation found in view.";
+
+    [Description("Message shown when workstation is removed from managed list")]
+    public string WorkstationRemoved { get; set; } = "Workstation removed from managed list.";
+
+    // Disconnect command messages
+    [Description("Description for the disconnect command")]
+    public string DisconnectCommandDescription { get; set; } = "Disconnects specified players from the cameras";
+
+    [Description("Usage hint for disconnect command")]
+    public string DisconnectUsage { get; set; } = "disconnect <playerId/playerName/@group>";
+
+    [Description("Error message format when failing to disconnect a player")]
+    public string DisconnectError { get; set; } = "Error disconnecting player {0}: {1}";
+
+    [Description("Success message after disconnecting players")]
+    public string DisconnectSuccess { get; set; } = "Successfully disconnected player(s)";
+
+    // Toggle command messages
+    [Description("Description for the toggle command")]
+    public string ToggleCommandDescription { get; set; } = "Toggles the camera system";
+
+    [Description("Message shown when camera system is disabled")]
+    public string ToggleDisabled { get; set; } = "Camera system has been disabled.";
+
+    [Description("Message shown when camera system is enabled")]
+    public string ToggleEnabled { get; set; } = "Camera system has been enabled.";
 }

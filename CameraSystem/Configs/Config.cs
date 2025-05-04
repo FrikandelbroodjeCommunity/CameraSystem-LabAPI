@@ -17,6 +17,9 @@ public sealed class Config : IConfig
     [Description("When the camera workstations should be spawned. (Generated = during map generation, RoundStarted = when round starts)")]
     public SpawnEvent SpawnEvent { get; set; } = SpawnEvent.Generated;
 
+    [Description("Whether the camera system is enabled by default when the plugin loads")]
+    public bool IsCameraSystemEnabledByDefault { get; set; } = true;
+
     [Description("Preset locations where workstations will be automatically spawned")]
     public PresetConfig[] PresetConfigs { get; set; } = new[]
     {

@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+using CameraSystem.Managers;
+using CommandSystem;
+using Exiled.API.Features;
+using Exiled.Permissions.Extensions;
+using Utils;
+
+namespace CameraSystem.Commands;
+internal class Disconnect : ICommand
+{
+    public string Command => "disconnect";
+    public string Description => Plugin.Instance.Translation.DisconnectCommandDescription;
+    public string[] Aliases { get; } = new[] { "d", "dc" };
+
+    public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
+    {
+        if (!sender.CheckPermission($"camsys.{Command}"))
+        {
+            response = string.Format(Plugin.Instance.Translation.NoPermission, $"camsys.{Command}");
+            return false;
+        }
+
+        if (arguments.Count == 0)
+        {
+            response = Plugin.Instance.Translation.DisconnectUsage;
+            return false;
+        }
+
+        List<ReferenceHub> referenceHubs = RAUtils.ProcessPlayerIdOrNamesList(arguments, 0, out _);
+
+        if (referenceHubs == null || referenceHubs.Count == 0)
+        {
+            response = Plugin.Instance.Translation.DisconnectNoPlayersFound;
+            return false;
+        }
+
+        foreach (ReferenceHub referenceHub in referenceHubs)
+        {
+            if (!Player.TryGet(referenceHub, out Player player))
+                continue;
+
+            try
+            {
+                CameraManager.Instance.Disconnect(player);
+            }
+            catch (Exception e)
+            {
+                response = string.Format(Plugin.Instance.Translation.DisconnectError, player.Nickname, e.Message);
+                return false;
+            }
+        }
+
+        response = Plugin.Instance.Translation.DisconnectSuccess;
+        return true;
+    }
+}
