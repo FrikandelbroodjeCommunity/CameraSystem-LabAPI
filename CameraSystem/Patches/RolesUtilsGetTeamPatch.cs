@@ -9,9 +9,9 @@ namespace CameraSystem.Patches;
 internal sealed class RolesUtilsGetTeamPatch
 {
     [HarmonyPrefix]
-    private static bool Prefix(ReferenceHub referenceHub, ref Team __result)
+    private static bool Prefix(ReferenceHub hub, ref Team __result)
     {
-        if (!Player.TryGet(referenceHub, out Player player) ||
+        if (!Player.TryGet(hub, out Player player) ||
             !CameraManager.Instance.TryGetWatcher(player, out Watcher watcher))
             return true;
 

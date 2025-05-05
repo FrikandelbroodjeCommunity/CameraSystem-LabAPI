@@ -22,6 +22,7 @@ camera_system:
   is_enabled: true
   debug: false
   spawn_event: Generated # Generated or RoundStarted
+  is_camera_system_enabled_by_default: true
   preset_configs:
   - room_type: EzIntercom
     local_position: {x: -6.9, y: -5.8, z: 1.2}

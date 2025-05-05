@@ -6,11 +6,7 @@ using Exiled.API.Features;
 using Exiled.Events.EventArgs.Interfaces;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Scp079;
-using LabApi.Events.Arguments.Interfaces;
-using Mirror;
-using PlayerRoles;
 using UnityEngine;
-using VoiceChat;
 
 namespace CameraSystem;
 internal static class EventHandlers
@@ -51,8 +47,8 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Player.Left += OnLeft;
         Exiled.Events.Handlers.Player.Dying += OnDying;
 
-        LabApi.Events.Handlers.PlayerEvents.ReceivingVoiceMessage += OnVoiceChatting;
-        LabApi.Events.Handlers.PlayerEvents.SendingVoiceMessage += OnVoiceChatting;
+        // LabApi.Events.Handlers.PlayerEvents.ReceivingVoiceMessage += OnVoiceChatting;
+        // LabApi.Events.Handlers.PlayerEvents.SendingVoiceMessage += OnVoiceChatting;
     }
 
     internal static void Unregister()
@@ -79,8 +75,8 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Player.Left -= OnLeft;
         Exiled.Events.Handlers.Player.Dying -= OnDying;
 
-        LabApi.Events.Handlers.PlayerEvents.ReceivingVoiceMessage -= OnVoiceChatting;
-        LabApi.Events.Handlers.PlayerEvents.SendingVoiceMessage -= OnVoiceChatting;
+        // LabApi.Events.Handlers.PlayerEvents.ReceivingVoiceMessage -= OnVoiceChatting;
+        // LabApi.Events.Handlers.PlayerEvents.SendingVoiceMessage -= OnVoiceChatting;
     }
 
     private static void SpawnWorkstations()
@@ -164,7 +160,7 @@ internal static class EventHandlers
         CameraManager.Instance.Disconnect(ev.Player);
     }
 
-    private static void OnPlayerEvent(Exiled.Events.EventArgs.Interfaces.IPlayerEvent ev)
+    private static void OnPlayerEvent(IPlayerEvent ev)
     {
         if (!CameraManager.Instance.IsWatching(ev.Player))
             return;
@@ -199,10 +195,12 @@ internal static class EventHandlers
         CameraManager.Instance.ForceDisconnect(ev.Player);
     }
 
+    /*
     private static void OnVoiceChatting(LabApi.Events.Arguments.Interfaces.IPlayerEvent ev)
     {
         if (CameraManager.Instance.IsWatching(Player.Get(ev.Player)) &&
             ((IVoiceMessageEvent)ev).Message.Channel == VoiceChatChannel.ScpChat)
             ((ICancellableEvent)ev).IsAllowed = false;
     }
+    */
 }
