@@ -5,11 +5,11 @@ using Exiled.API.Features;
 using HarmonyLib;
 
 namespace CameraSystem;
-public sealed class Plugin : Plugin<Config, Translation>
+public class Plugin : Plugin<Config, Translation>
 {
     public override string Author => "Jiraya";
     public override string Name => "CameraSystem";
-    public override Version Version { get; } = new(1, 0, 8);
+    public override Version Version { get; } = new(1, 0, 9);
 
     internal static Plugin Instance { get; private set; }
     internal CameraManager CameraManager { get; private set; }
@@ -20,10 +20,10 @@ public sealed class Plugin : Plugin<Config, Translation>
     {
         Instance = this;
 
-        CameraManager = new CameraManager();
+        CameraManager = new();
         EventHandlers.Register();
 
-        _harmony = new Harmony($"com.{Author}.{Name}.{DateTime.Now.Ticks}");
+        _harmony = new($"com.{Author}.{Name}.{DateTime.Now.Ticks}");
         _harmony.PatchAll();
 
         base.OnEnabled();

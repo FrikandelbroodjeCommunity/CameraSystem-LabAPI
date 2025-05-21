@@ -1,7 +1,7 @@
 ﻿using Exiled.API.Features;
 
 namespace CameraSystem.Models;
-internal sealed class Watcher
+internal class Watcher
 {
     internal Player Player { get; }
     internal PlayerSnapshot PlayerSnapshot { get; }

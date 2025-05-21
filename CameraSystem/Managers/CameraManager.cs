@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CameraSystem.Models;
 using Exiled.API.Enums;
 using Exiled.API.Features;
@@ -21,13 +22,14 @@ internal sealed class CameraManager : IDisposable
     internal List<WorkstationController> WorkstationControllers { get; set; } = new();
 
     private readonly List<Watcher> _watchers = new();
+    private bool _disposed;
 
     internal void Connect(Player player)
     {
         if (IsWatching(player))
             return;
 
-        Watcher watcher = new Watcher(player);
+        Watcher watcher = new(player);
         _watchers.Add(watcher);
 
         player.Role.Set(RoleTypeId.Scp079, RoleSpawnFlags.None);
@@ -50,24 +52,20 @@ internal sealed class CameraManager : IDisposable
             watcher.Player.SetAmmo(watcher.PlayerSnapshot.Ammo);
 
             foreach (KeyValuePair<EffectType, (byte Intensity, float Duration)> kvp in watcher.PlayerSnapshot.ActiveEffects)
-            {
                 watcher.Player.EnableEffect(kvp.Key, kvp.Value.Intensity, kvp.Value.Duration);
-            }
 
-            if (damageHandler != null && player.IsAlive)
-            {
+            if (damageHandler is not null && player.IsAlive)
                 watcher.Player.Hurt(damageHandler);
-            }
 
             watcher.Player.ShowHint(Plugin.Instance.Translation.DisconnectionMessage);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Log.Error($"Error during disconnect: {e}");
+            Log.Error($"Error during disconnect: {ex}");
         }
         finally
         {
-            if (watcher.Npc != null)
+            if (watcher.Npc is not null)
             {
                 RoundSummary.singleton.OnServerRoleSet(watcher.Npc.ReferenceHub, RoleTypeId.None, RoleChangeReason.Destroyed);
                 NetworkServer.DestroyPlayerForConnection(watcher.Npc.NetworkIdentity.connectionToClient);
@@ -83,18 +81,18 @@ internal sealed class CameraManager : IDisposable
     {
         IsCameraSystemEnabled = false;
 
-        foreach (Watcher watcher in _watchers.ToArray())
+        foreach (Player player in _watchers.Select(w => w.Player).ToArray())
         {
-            if (watcher.Player.Role is not Scp079Role scp079Role)
+            if (player.Role is not Scp079Role scp079Role)
             {
-                ForceDisconnect(watcher.Player);
+                ForceDisconnect(player);
                 continue;
             }
 
             scp079Role.LoseSignal(3f);
-            watcher.Player.ShowHint(Plugin.Instance.Translation.CameraSystemDisabledMessage);
+            player.ShowHint(Plugin.Instance.Translation.CameraSystemDisabledMessage);
 
-            Timing.CallDelayed(3f, () => Disconnect(watcher.Player));
+            Timing.CallDelayed(3f, () => Disconnect(player));
         }
     }
 
@@ -106,7 +104,7 @@ internal sealed class CameraManager : IDisposable
     internal bool TryGetWatcher(Player player, out Watcher watcher)
     {
         watcher = _watchers.Find(w => w.Player == player || w.Npc == player);
-        return watcher != null;
+        return watcher is not null;
     }
 
     internal void ForceDisconnect(Player player)
@@ -143,26 +141,42 @@ internal sealed class CameraManager : IDisposable
 
     public void Dispose()
     {
-        foreach (Watcher watcher in _watchers.ToArray())
-        {
-            try
-            {
-                if (watcher.Player != null)
-                    Disconnect(watcher.Player);
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-                if (watcher.Npc != null && watcher.Npc.IsAlive)
+    private void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            foreach (Watcher watcher in _watchers.ToArray())
+            {
+                try
                 {
-                    watcher.Npc.Kill(DamageType.Unknown);
-                    NetworkServer.Destroy(watcher.Npc.GameObject);
+                    if (watcher.Player is not null)
+                        Disconnect(watcher.Player);
+
+                    if (watcher.Npc is not null && watcher.Npc.IsAlive)
+                    {
+                        watcher.Npc.Kill(DamageType.Unknown);
+                        NetworkServer.Destroy(watcher.Npc.GameObject);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Error disposing watcher: {ex}");
                 }
             }
-            catch (Exception e)
-            {
-                Log.Error($"Error disposing watcher: {e}");
-            }
+
+            _watchers.Clear();
+            WorkstationControllers.Clear();
         }
 
-        _watchers.Clear();
-        WorkstationControllers.Clear();
+        _disposed = true;
     }
+
+    ~CameraManager() => Dispose(false);
 }

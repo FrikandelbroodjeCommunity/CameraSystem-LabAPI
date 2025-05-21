@@ -8,7 +8,7 @@ using PlayerRoles.FirstPersonControl.Thirdperson.Subcontrollers;
 using UnityEngine;
 
 namespace CameraSystem.Models;
-internal sealed class PlayerSnapshot
+internal class PlayerSnapshot
 {
     internal Dictionary<EffectType, (byte Intensity, float Duration)> ActiveEffects { get; }
     internal Dictionary<AmmoType, ushort> Ammo { get; }

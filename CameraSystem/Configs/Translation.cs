@@ -2,7 +2,7 @@
 using Exiled.API.Interfaces;
 
 namespace CameraSystem.Configs;
-public sealed class Translation : ITranslation
+public class Translation : ITranslation
 {
     [Description("The text appended to a player's custom info when they're watching cameras")]
     public string WatchingCamerasPostfix { get; set; } = "\nWatching Security Cameras";
@@ -15,6 +15,9 @@ public sealed class Translation : ITranslation
 
     [Description("The message shown when a player connects but the camera system is disabled")]
     public string CameraSystemDisabledMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>Unable to establish connection...</color>\n<color=#C50000>ERROR: Camera network unreachable. System currently disabled.</color></b></size>";
+
+    [Description("Usage hint for command")]
+    public string InvalidArguments { get; set; } = "To execute this command provide at least {0} arguments!\nUsage: {1}";
 
     // Parent command messages
     [Description("Description for the parent camera system command")]
@@ -49,12 +52,6 @@ public sealed class Translation : ITranslation
     // Disconnect command messages
     [Description("Description for the disconnect command")]
     public string DisconnectCommandDescription { get; set; } = "Disconnects specified players from the cameras";
-
-    [Description("Usage hint for disconnect command")]
-    public string DisconnectUsage { get; set; } = "disconnect <playerId/playerName/@group>";
-
-    [Description("Error message format when failing to disconnect a player")]
-    public string DisconnectError { get; set; } = "Error disconnecting player {0}: {1}";
 
     [Description("Success message after disconnecting players")]
     public string DisconnectSuccess { get; set; } = "Successfully disconnected player(s)";

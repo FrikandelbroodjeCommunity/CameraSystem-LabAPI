@@ -6,7 +6,7 @@ using Exiled.API.Interfaces;
 using UnityEngine;
 
 namespace CameraSystem.Configs;
-public sealed class Config : IConfig
+public class Config : IConfig
 {
     [Description("Whether the CameraSystem plugin is enabled")]
     public bool IsEnabled { get; set; } = true;
@@ -23,12 +23,12 @@ public sealed class Config : IConfig
     [Description("Preset locations where workstations will be automatically spawned")]
     public PresetConfig[] PresetConfigs { get; set; } = new[]
     {
-        new PresetConfig(RoomType.HczArmory, new Vector3(1.1f, 0f, 2.1f), new Vector3(0f, 180f, 0f), Vector3.one),
-        new PresetConfig(RoomType.EzIntercom, new Vector3(-5.4f, 0f, -1.8f), Vector3.zero, Vector3.one),
-        new PresetConfig(RoomType.EzIntercom, new Vector3(-6.9f, -5.8f, 1.2f), new Vector3(0f, 90f, 0f), new Vector3(1f, 1f, 0.7f)),
-        new PresetConfig(RoomType.HczNuke, new Vector3(2f, -72.4f, 8.5f), Vector3.zero, Vector3.one),
-        new PresetConfig(RoomType.Lcz914, new Vector3(-1.9f, 0f, 5.5f), new Vector3(0f, 90f, 0f), Vector3.one),
-        new PresetConfig(RoomType.Lcz914, new Vector3(-6.2f, 0f, 3.1f), new Vector3(0f, 180f, 0f), Vector3.one)
+        new PresetConfig(RoomType.HczArmory, new(1.1f, 0f, 2.1f), new(0f, 180f, 0f), Vector3.one),
+        new PresetConfig(RoomType.EzIntercom, new(-5.4f, 0f, -1.8f), Vector3.zero, Vector3.one),
+        new PresetConfig(RoomType.EzIntercom, new(-6.9f, -5.8f, 1.2f), new(0f, 90f, 0f), new(1f, 1f, 0.7f)),
+        new PresetConfig(RoomType.HczNuke, new(2f, -72.4f, 8.5f), Vector3.zero, Vector3.one),
+        new PresetConfig(RoomType.Lcz914, new(-1.9f, 0f, 5.5f), new(0f, 90f, 0f), Vector3.one),
+        new PresetConfig(RoomType.Lcz914, new(-6.2f, 0f, 3.1f), new(0f, 180f, 0f), Vector3.one)
     };
 
     [Description("List of camera workstation configurations including their positions, rotations, and scales")]

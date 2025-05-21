@@ -7,7 +7,7 @@ using InventorySystem.Items.Firearms.Attachments;
 using UnityEngine;
 
 namespace CameraSystem.Commands;
-internal sealed class ToggleWorkstationUsage : ICommand
+internal class ToggleWorkstationUsage : ICommand
 {
     public string Command => "toggleworkstationusage";
     public string Description => Plugin.Instance.Translation.ToggleWorkstationUsageDescription;
@@ -35,7 +35,7 @@ internal sealed class ToggleWorkstationUsage : ICommand
 
         WorkstationController workstationController = hit.collider.GetComponentInParent<WorkstationController>();
 
-        if (workstationController == null)
+        if (workstationController is null)
         {
             response = Plugin.Instance.Translation.NoWorkstationFound;
             return false;

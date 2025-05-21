@@ -6,7 +6,7 @@ using PlayerRoles;
 
 namespace CameraSystem.Patches;
 [HarmonyPatch(typeof(PlayerRolesUtils), nameof(PlayerRolesUtils.GetTeam), typeof(ReferenceHub))]
-internal sealed class RolesUtilsGetTeamPatch
+internal static class RolesUtilsGetTeamPatch
 {
     [HarmonyPrefix]
     private static bool Prefix(ReferenceHub hub, ref Team __result)

@@ -6,7 +6,7 @@ using PlayerRoles;
 
 namespace CameraSystem.Patches;
 [HarmonyPatch(typeof(HumanRole), nameof(HumanRole.Team), MethodType.Getter)]
-internal sealed class HumanRoleTeamPatch
+internal static class HumanRoleTeamPatch
 {
     [HarmonyPrefix]
     private static bool Prefix(HumanRole __instance, ref Team __result)

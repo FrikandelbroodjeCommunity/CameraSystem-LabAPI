@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace CameraSystem.Models;
-public sealed class WorkstationConfig
+public class WorkstationConfig
 {
     [Description("The position where the workstation should spawn")]
     public Vector3 Position { get; set; }

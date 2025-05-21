@@ -3,7 +3,7 @@ using Exiled.API.Enums;
 using UnityEngine;
 
 namespace CameraSystem.Models;
-public sealed class PresetConfig
+public class PresetConfig
 {
     [Description("The room type where the workstation should be spawned (e.g. HczArmory, EzIntercom)")]
     public RoomType RoomType { get; set; }

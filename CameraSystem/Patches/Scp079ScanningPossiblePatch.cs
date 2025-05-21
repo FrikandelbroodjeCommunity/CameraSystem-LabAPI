@@ -5,7 +5,7 @@ using PlayerRoles.PlayableScps.Scp079;
 
 namespace CameraSystem.Patches;
 [HarmonyPatch(typeof(Scp079ScannerSequence), nameof(Scp079ScannerSequence.ScanningPossible), MethodType.Getter)]
-internal sealed class Scp079ScanningPossiblePatch
+internal static class Scp079ScanningPossiblePatch
 {
     [HarmonyPrefix]
     private static bool Prefix(Scp079ScannerSequence __instance, ref bool __result)

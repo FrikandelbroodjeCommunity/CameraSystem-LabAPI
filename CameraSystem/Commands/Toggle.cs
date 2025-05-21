@@ -4,7 +4,7 @@ using CommandSystem;
 using Exiled.Permissions.Extensions;
 
 namespace CameraSystem.Commands;
-internal sealed class Toggle : ICommand
+internal class Toggle : ICommand
 {
     public string Command => "toggle";
     public string Description => Plugin.Instance.Translation.ToggleCommandDescription;

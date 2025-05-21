@@ -7,11 +7,13 @@ using Exiled.Permissions.Extensions;
 using Utils;
 
 namespace CameraSystem.Commands;
-internal class Disconnect : ICommand
+internal class Disconnect : ICommand, IUsageProvider
 {
     public string Command => "disconnect";
     public string Description => Plugin.Instance.Translation.DisconnectCommandDescription;
     public string[] Aliases { get; } = new[] { "d", "dc" };
+
+    public string[] Usage { get; } = new[] { "%player%" };
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
@@ -23,13 +25,13 @@ internal class Disconnect : ICommand
 
         if (arguments.Count == 0)
         {
-            response = Plugin.Instance.Translation.DisconnectUsage;
+            response = string.Format(Plugin.Instance.Translation.InvalidArguments, "1", this.DisplayCommandUsage());
             return false;
         }
 
         List<ReferenceHub> referenceHubs = RAUtils.ProcessPlayerIdOrNamesList(arguments, 0, out _);
 
-        if (referenceHubs == null || referenceHubs.Count == 0)
+        if (referenceHubs is null || referenceHubs.Count == 0)
         {
             response = Plugin.Instance.Translation.DisconnectNoPlayersFound;
             return false;
@@ -44,9 +46,10 @@ internal class Disconnect : ICommand
             {
                 CameraManager.Instance.Disconnect(player);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                response = string.Format(Plugin.Instance.Translation.DisconnectError, player.Nickname, e.Message);
+                response = string.Empty;
+                Log.Error($"Error disconnecting player: {ex}");
                 return false;
             }
         }
