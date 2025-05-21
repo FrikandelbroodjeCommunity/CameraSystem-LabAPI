@@ -1,22 +1,7 @@
-﻿<p align="center">
-  <a href="https://github.com/intjiraya/CameraSystem/releases/latest">
-    <img src="https://img.shields.io/github/v/release/intjiraya/CameraSystem?style=for-the-badge&label=Latest%20Release" alt="Latest Release">
-  </a>
-  <a href="https://github.com/intjiraya/CameraSystem/releases">
-    <img src="https://img.shields.io/github/downloads/intjiraya/CameraSystem/total?style=for-the-badge&color=brightgreen&label=Total%20Downloads" alt="Total Downloads">
-  </a>
-  <img src="https://img.shields.io/badge/EXILED-9.6.0+-blueviolet?style=for-the-badge" alt="EXILED Version">
-  <a href="https://github.com/intjiraya/CameraSystem/commits/main">
-    <img src="https://img.shields.io/github/last-commit/intjiraya/CameraSystem?style=for-the-badge&color=yellow" alt="Last Commit">
-  </a>
-  <a href="https://github.com/intjiraya/CameraSystem/issues">
-    <img src="https://img.shields.io/github/issues/intjiraya/CameraSystem?style=for-the-badge" alt="GitHub issues">
-  </a>
-  <a href="https://github.com/intjiraya/CameraSystem/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/intjiraya/CameraSystem?style=for-the-badge" alt="License">
-  </a>
-</p>
-
+﻿[![Latest Release](https://img.shields.io/github/v/release/intjiraya/CameraSystem?style=for-the-badge&label=Latest%20Release)](https://github.com/intjiraya/CameraSystem/releases/latest)
+[![Total Downloads](https://img.shields.io/github/downloads/intjiraya/CameraSystem/total?style=for-the-badge&color=brightgreen&label=Total%20Downloads)](https://github.com/intjiraya/CameraSystem/releases)
+![EXILED Version](https://img.shields.io/badge/EXILED-9.6.0+-blueviolet?style=for-the-badge)
+[![Last Commit](https://img.shields.io/github/last-commit/intjiraya/CameraSystem?style=for-the-badge&color=yellow)](https://github.com/intjiraya/CameraSystem/commits/main)
 
 # CameraSystem
 
