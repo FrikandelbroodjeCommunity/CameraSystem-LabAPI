@@ -65,13 +65,8 @@ internal sealed class CameraManager : IDisposable
         }
         finally
         {
-            if (watcher.Npc is not null)
-            {
-                RoundSummary.singleton.OnServerRoleSet(watcher.Npc.ReferenceHub, RoleTypeId.None, RoleChangeReason.Destroyed);
-                NetworkServer.DestroyPlayerForConnection(watcher.Npc.NetworkIdentity.connectionToClient);
-            }
-
             _watchers.Remove(watcher);
+            watcher.DestroyNpc();
         }
     }
 
@@ -112,15 +107,13 @@ internal sealed class CameraManager : IDisposable
         if (!TryGetWatcher(player, out Watcher watcher))
             return;
 
-        if (watcher.Npc.IsAlive)
-        {
-            watcher.Npc.Kill(DamageType.Unknown);
+        ForceDisconnect(watcher);
+    }
 
-            RoundSummary.singleton.OnServerRoleSet(watcher.Npc.ReferenceHub, RoleTypeId.None, RoleChangeReason.Destroyed);
-            NetworkServer.DestroyPlayerForConnection(watcher.Npc.NetworkIdentity.connectionToClient);
-        }
-
+    internal void ForceDisconnect(Watcher watcher)
+    {
         _watchers.Remove(watcher);
+        watcher.DestroyNpc();
     }
 
     internal void CreateWorkstation(GameObject prefab, Vector3 position, Quaternion rotation, Vector3 scale)

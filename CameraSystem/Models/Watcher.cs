@@ -1,4 +1,6 @@
 ﻿using Exiled.API.Features;
+using Mirror;
+using PlayerRoles;
 
 namespace CameraSystem.Models;
 internal class Watcher
@@ -12,6 +14,16 @@ internal class Watcher
         Player = player;
         PlayerSnapshot = new(player);
         Npc = SpawnNpc();
+    }
+
+    internal void DestroyNpc()
+    {
+        if (Npc is null)
+            return;
+
+        RoundSummary.singleton.OnServerRoleSet(Npc.ReferenceHub, RoleTypeId.None, RoleChangeReason.Destroyed);
+        NetworkServer.DestroyPlayerForConnection(Npc.NetworkIdentity.connectionToClient);
+        Npc.Destroy();
     }
 
     private Npc SpawnNpc()
