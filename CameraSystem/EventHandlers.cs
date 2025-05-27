@@ -40,6 +40,7 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.TriggeringDoor += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.InteractingTesla += OnPlayerEvent;
+        Exiled.Events.Handlers.Scp079.ChangingCamera -= OnChangingCamera;
 
         Exiled.Events.Handlers.Player.ActivatingWorkstation += OnActivatingWorkstation;
         Exiled.Events.Handlers.Player.TriggeringTesla += OnPlayerEvent;
@@ -68,6 +69,7 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.TriggeringDoor -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.InteractingTesla -= OnPlayerEvent;
+        Exiled.Events.Handlers.Scp079.ChangingCamera -= OnChangingCamera;
 
         Exiled.Events.Handlers.Player.ActivatingWorkstation -= OnActivatingWorkstation;
         Exiled.Events.Handlers.Player.TriggeringTesla -= OnPlayerEvent;
@@ -168,6 +170,14 @@ internal static class EventHandlers
             return;
 
         ((IDeniableEvent)ev).IsAllowed = false;
+    }
+
+    private static void OnChangingCamera(ChangingCameraEventArgs ev)
+    {
+        if (!ev.Camera.IsBeingUsed)
+            return;
+
+        ev.IsAllowed = false;
     }
 
     private static void OnHurting(HurtingEventArgs ev)
