@@ -131,6 +131,12 @@ internal static class EventHandlers
 
         ev.IsAllowed = false;
 
+        if (Plugin.Instance.Config.ProhibitedRoles.Contains(ev.Player.Role.Type))
+        {
+            ev.Player.ShowHint(Plugin.Instance.Translation.ProhibitedRoleMessage);
+            return;
+        }
+
         if (!CameraManager.Instance.IsCameraSystemEnabled)
         {
             ev.Player.ShowHint(Plugin.Instance.Translation.CameraSystemDisabledMessage);

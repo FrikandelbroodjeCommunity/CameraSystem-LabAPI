@@ -5,6 +5,7 @@ using CameraSystem.Models;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.API.Features.DamageHandlers;
+using Exiled.API.Features.Items;
 using Exiled.API.Features.Roles;
 using InventorySystem.Items.Firearms.Attachments;
 using MEC;
@@ -33,6 +34,7 @@ internal sealed class CameraManager : IDisposable
         _watchers.Add(watcher);
 
         player.Role.Set(RoleTypeId.Scp079, RoleSpawnFlags.None);
+        player.CurrentItem = null;
 
         player.ShowHint(Plugin.Instance.Translation.ConnectionSuccessMessage);
     }

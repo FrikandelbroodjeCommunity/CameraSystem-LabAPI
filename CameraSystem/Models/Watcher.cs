@@ -34,8 +34,10 @@ internal class Watcher
         npc.Emotion = PlayerSnapshot.Emotion;
         npc.Health = PlayerSnapshot.Health;
         npc.ArtificialHealth = PlayerSnapshot.ArtificialHealth;
+
         npc.Scale = PlayerSnapshot.Scale;
         npc.InfoArea &= ~PlayerInfoArea.Badge;
+        npc.CustomName = PlayerSnapshot.CustomName;
 
         return npc;
     }

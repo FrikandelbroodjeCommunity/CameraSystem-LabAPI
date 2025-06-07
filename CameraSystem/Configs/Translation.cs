@@ -16,6 +16,9 @@ public class Translation : ITranslation
     [Description("The message shown when a player connects but the camera system is disabled")]
     public string CameraSystemDisabledMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>Unable to establish connection...</color>\n<color=#C50000>ERROR: Camera network unreachable. System currently disabled.</color></b></size>";
 
+    [Description("The message shown when a prohibited role tries to use cameras")]
+    public string ProhibitedRoleMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>Your role cannot interact with the camera system.</b></size></color>";
+
     [Description("Usage hint for command")]
     public string InvalidArguments { get; set; } = "To execute this command provide at least {0} arguments!\nUsage: {1}";
 

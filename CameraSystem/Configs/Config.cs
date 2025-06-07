@@ -3,6 +3,7 @@ using CameraSystem.Enums;
 using CameraSystem.Models;
 using Exiled.API.Enums;
 using Exiled.API.Interfaces;
+using PlayerRoles;
 using UnityEngine;
 
 namespace CameraSystem.Configs;
@@ -36,5 +37,15 @@ public class Config : IConfig
     {
         new WorkstationConfig(Vector3.zero, Vector3.zero, Vector3.one),
         new WorkstationConfig(Vector3.one, Vector3.one, Vector3.one)
+    };
+
+    [Description("Roles that are prohibited from interacting with camera workstations")]
+    public RoleTypeId[] ProhibitedRoles { get; set; } = new[]
+    {
+        RoleTypeId.Scp096,
+        RoleTypeId.Scp106,
+        RoleTypeId.Scp173,
+        RoleTypeId.Scp0492,
+        RoleTypeId.Scp3114
     };
 }

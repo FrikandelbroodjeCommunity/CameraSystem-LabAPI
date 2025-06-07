@@ -9,7 +9,7 @@ public class Plugin : Plugin<Config, Translation>
 {
     public override string Author => "Jiraya";
     public override string Name => "CameraSystem";
-    public override Version Version { get; } = new(1, 1, 1);
+    public override Version Version { get; } = new(1, 1, 2);
 
     internal static Plugin Instance { get; private set; }
     internal CameraManager CameraManager { get; private set; }
