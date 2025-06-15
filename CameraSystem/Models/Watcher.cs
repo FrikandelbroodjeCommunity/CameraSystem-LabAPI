@@ -7,7 +7,7 @@ internal class Watcher
 {
     internal Player Player { get; }
     internal PlayerSnapshot PlayerSnapshot { get; }
-    internal Npc Npc { get; }
+    internal Npc? Npc { get; }
 
     internal Watcher(Player player)
     {
@@ -30,7 +30,7 @@ internal class Watcher
     {
         Npc npc = Npc.Spawn(PlayerSnapshot.CustomName, PlayerSnapshot.Role, PlayerSnapshot.Position);
 
-        npc.CustomInfo = $"{PlayerSnapshot.CustomInfo}{Plugin.Instance.Translation.WatchingCamerasPostfix}";
+        npc.CustomInfo = $"{PlayerSnapshot.CustomInfo}{CameraSystem.Instance.Translation.WatchingCamerasPostfix}";
         npc.Emotion = PlayerSnapshot.Emotion;
         npc.Health = PlayerSnapshot.Health;
         npc.ArtificialHealth = PlayerSnapshot.ArtificialHealth;

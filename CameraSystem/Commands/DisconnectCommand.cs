@@ -7,25 +7,25 @@ using Exiled.Permissions.Extensions;
 using Utils;
 
 namespace CameraSystem.Commands;
-internal class Disconnect : ICommand, IUsageProvider
+internal class DisconnectCommand : ICommand, IUsageProvider
 {
     public string Command => "disconnect";
-    public string Description => Plugin.Instance.Translation.DisconnectCommandDescription;
+    public string Description => CameraSystem.Instance.Translation.DisconnectCommandDescription;
     public string[] Aliases { get; } = new[] { "d", "dc" };
 
     public string[] Usage { get; } = new[] { "%player%" };
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (!sender.CheckPermission($"camsys.{Command}"))
+        if (!sender.CheckPermission(CameraSystemParentCommand.PermissionPrefix + Command))
         {
-            response = string.Format(Plugin.Instance.Translation.NoPermission, $"camsys.{Command}");
+            response = CameraSystem.Instance.Translation.NoPermission;
             return false;
         }
 
         if (arguments.Count == 0)
         {
-            response = string.Format(Plugin.Instance.Translation.InvalidArguments, "1", this.DisplayCommandUsage());
+            response = string.Format(CameraSystem.Instance.Translation.InvalidArguments, "1", this.DisplayCommandUsage());
             return false;
         }
 
@@ -33,7 +33,7 @@ internal class Disconnect : ICommand, IUsageProvider
 
         if (referenceHubs is null || referenceHubs.Count == 0)
         {
-            response = Plugin.Instance.Translation.DisconnectNoPlayersFound;
+            response = CameraSystem.Instance.Translation.DisconnectNoPlayersFound;
             return false;
         }
 
@@ -54,7 +54,7 @@ internal class Disconnect : ICommand, IUsageProvider
             }
         }
 
-        response = Plugin.Instance.Translation.DisconnectSuccess;
+        response = CameraSystem.Instance.Translation.DisconnectSuccess;
         return true;
     }
 }

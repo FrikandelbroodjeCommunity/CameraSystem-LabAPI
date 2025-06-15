@@ -15,7 +15,7 @@ internal static class EventHandlers
 {
     internal static void Register()
     {
-        switch (Plugin.Instance.Config.SpawnEvent)
+        switch (CameraSystem.Instance.Config.SpawnEvent)
         {
             case SpawnEvent.Generated:
                 Exiled.Events.Handlers.Map.Generated += SpawnWorkstations;
@@ -24,7 +24,7 @@ internal static class EventHandlers
                 Exiled.Events.Handlers.Server.RoundStarted += SpawnWorkstations;
                 break;
             default:
-                Log.Warn($"Invalid spawn event type \"{Plugin.Instance.Config.SpawnEvent}\". " +
+                Log.Warn($"Invalid spawn event type \"{CameraSystem.Instance.Config.SpawnEvent}\". " +
                          $"Defaulting to \"{SpawnEvent.Generated}\".");
                 Exiled.Events.Handlers.Map.Generated += SpawnWorkstations;
                 break;
@@ -40,7 +40,8 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.TriggeringDoor += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.InteractingTesla += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ChangingCamera -= OnChangingCamera;
+        Exiled.Events.Handlers.Scp079.ElevatorTeleporting += OnPlayerEvent;
+        Exiled.Events.Handlers.Scp079.ChangingCamera += OnChangingCamera;
 
         Exiled.Events.Handlers.Player.ActivatingWorkstation += OnActivatingWorkstation;
         Exiled.Events.Handlers.Player.TriggeringTesla += OnPlayerEvent;
@@ -69,6 +70,7 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.TriggeringDoor -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.InteractingTesla -= OnPlayerEvent;
+        Exiled.Events.Handlers.Scp079.ElevatorTeleporting -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.ChangingCamera -= OnChangingCamera;
 
         Exiled.Events.Handlers.Player.ActivatingWorkstation -= OnActivatingWorkstation;
@@ -91,10 +93,10 @@ internal static class EventHandlers
             return;
         }
 
-        Log.Debug($"Starting workstation spawn process. Found {Plugin.Instance.Config.PresetConfigs.Length} presets " +
-                  $"and {Plugin.Instance.Config.Workstations.Length} custom workstations to spawn.");
+        Log.Debug($"Starting workstation spawn process. Found {CameraSystem.Instance.Config.PresetConfigs.Length} presets " +
+                  $"and {CameraSystem.Instance.Config.Workstations.Length} custom workstations to spawn.");
 
-        foreach (PresetConfig presetConfig in Plugin.Instance.Config.PresetConfigs)
+        foreach (PresetConfig presetConfig in CameraSystem.Instance.Config.PresetConfigs)
         {
             Room targetRoom = Room.Get(presetConfig.RoomType);
             if (targetRoom is null)
@@ -111,7 +113,7 @@ internal static class EventHandlers
             );
         }
 
-        foreach (WorkstationConfig workstationConfig in Plugin.Instance.Config.Workstations)
+        foreach (WorkstationConfig workstationConfig in CameraSystem.Instance.Config.Workstations)
         {
             CameraManager.Instance.CreateWorkstation(
                 prefab,
@@ -121,7 +123,7 @@ internal static class EventHandlers
             );
         }
 
-        Log.Debug($"Successfully spawned {Plugin.Instance.Config.PresetConfigs.Length + Plugin.Instance.Config.Workstations.Length} workstations in total.");
+        Log.Debug($"Successfully spawned {CameraSystem.Instance.Config.PresetConfigs.Length + CameraSystem.Instance.Config.Workstations.Length} workstations in total.");
     }
 
     private static void OnActivatingWorkstation(ActivatingWorkstationEventArgs ev)
@@ -131,15 +133,15 @@ internal static class EventHandlers
 
         ev.IsAllowed = false;
 
-        if (Plugin.Instance.Config.ProhibitedRoles.Contains(ev.Player.Role.Type))
+        if (CameraSystem.Instance.Config.ProhibitedRoles.Contains(ev.Player.Role.Type))
         {
-            ev.Player.ShowHint(Plugin.Instance.Translation.ProhibitedRoleMessage);
+            ev.Player.ShowHint(CameraSystem.Instance.Translation.ProhibitedRoleMessage);
             return;
         }
 
         if (!CameraManager.Instance.IsCameraSystemEnabled)
         {
-            ev.Player.ShowHint(Plugin.Instance.Translation.CameraSystemDisabledMessage);
+            ev.Player.ShowHint(CameraSystem.Instance.Translation.CameraSystemDisabledMessage);
             return;
         }
 
@@ -148,16 +150,14 @@ internal static class EventHandlers
 
     private static void OnDying(DyingEventArgs ev)
     {
-        Npc npc = Npc.Get(ev.Player.ReferenceHub);
+        Npc? npc = Npc.Get(ev.Player.ReferenceHub);
         if (npc is null || !CameraManager.Instance.TryGetWatcher(npc, out Watcher watcher))
             return;
 
         ev.IsAllowed = false;
 
-        if (watcher.Player is not null)
-        {
+        if (watcher.Player.IsConnected)
             CameraManager.Instance.Disconnect(watcher.Player, ev.DamageHandler);
-        }
     }
 
     private static void OnPinging(PingingEventArgs ev)

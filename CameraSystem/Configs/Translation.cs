@@ -34,7 +34,7 @@ public class Translation : ITranslation
 
     // Shared
     [Description("Message shown when player lacks permission for the command")]
-    public string NoPermission { get; set; } = "You do not have permission to execute this command. Required permission: {0}";
+    public string NoPermission { get; set; } = "You do not have permission to execute this command.";
 
     [Description("Message shown when command for players used not by player")]
     public string NotPlayer { get; set; } = "You must be a player to use this command!";
@@ -52,7 +52,7 @@ public class Translation : ITranslation
     [Description("Message shown when workstation is removed from managed list")]
     public string WorkstationRemoved { get; set; } = "Workstation removed from managed list.";
 
-    // Disconnect command messages
+    // DisconnectCommand command messages
     [Description("Description for the disconnect command")]
     public string DisconnectCommandDescription { get; set; } = "Disconnects specified players from the cameras";
 

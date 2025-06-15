@@ -7,29 +7,29 @@ using InventorySystem.Items.Firearms.Attachments;
 using UnityEngine;
 
 namespace CameraSystem.Commands;
-internal class ToggleWorkstationUsage : ICommand
+internal class ToggleWorkstationUsageCommand : ICommand
 {
     public string Command => "toggleworkstationusage";
-    public string Description => Plugin.Instance.Translation.ToggleWorkstationUsageDescription;
+    public string Description => CameraSystem.Instance.Translation.ToggleWorkstationUsageDescription;
     public string[] Aliases { get; } = new[] { "twu" };
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (!sender.CheckPermission($"camsys.{Command}"))
+        if (!sender.CheckPermission(CameraSystemParentCommand.PermissionPrefix + Command))
         {
-            response = string.Format(Plugin.Instance.Translation.NoPermission, $"camsys.{Command}");
+            response = CameraSystem.Instance.Translation.NoPermission;
             return false;
         }
 
         if (!Player.TryGet(sender, out Player player))
         {
-            response = Plugin.Instance.Translation.NotPlayer;
+            response = CameraSystem.Instance.Translation.NotPlayer;
             return false;
         }
 
         if (!Physics.Raycast(player.CameraTransform.position, player.CameraTransform.forward, out RaycastHit hit, 5f))
         {
-            response = Plugin.Instance.Translation.NoWorkstationFound;
+            response = CameraSystem.Instance.Translation.NoWorkstationFound;
             return false;
         }
 
@@ -37,14 +37,14 @@ internal class ToggleWorkstationUsage : ICommand
 
         if (workstationController is null)
         {
-            response = Plugin.Instance.Translation.NoWorkstationFound;
+            response = CameraSystem.Instance.Translation.NoWorkstationFound;
             return false;
         }
 
         if (CameraManager.Instance.WorkstationControllers.Contains(workstationController))
         {
             CameraManager.Instance.WorkstationControllers.Remove(workstationController);
-            response = Plugin.Instance.Translation.WorkstationRemoved;
+            response = CameraSystem.Instance.Translation.WorkstationRemoved;
             return true;
         }
 
@@ -55,21 +55,23 @@ internal class ToggleWorkstationUsage : ICommand
         Vector3 localRot = (Quaternion.Inverse(room?.transform.rotation ?? Quaternion.identity) *
                             workstationController.transform.rotation).eulerAngles;
 
-        response = $"Workstation added to managed list.\n" +
-                   $"Preset configuration (copy to config):\n" +
-                   $"room_type: {room?.Type}\n" +
-                   $"local_position:\n" +
-                   $"  x: {localPos.x:0.###}\n" +
-                   $"  y: {localPos.y:0.###}\n" +
-                   $"  z: {localPos.z:0.###}\n" +
-                   $"local_rotation:\n" +
-                   $"  x: {localRot.x:0.###}\n" +
-                   $"  y: {localRot.y:0.###}\n" +
-                   $"  z: {localRot.z:0.###}\n" +
-                   $"scale:\n" +
-                   $"  x: {workstationController.transform.localScale.x:0.###}\n" +
-                   $"  y: {workstationController.transform.localScale.y:0.###}\n" +
-                   $"  z: {workstationController.transform.localScale.z:0.###}";
+        response = $"""
+                    Workstation added to managed list.
+                    Preset configuration (copy to config):
+                    room_type: {room?.Type}
+                    local_position:
+                      x: {localPos.x:0.###}
+                      y: {localPos.y:0.###}
+                      z: {localPos.z:0.###}
+                    local_rotation:
+                      x: {localRot.x:0.###}
+                      y: {localRot.y:0.###}
+                      z: {localRot.z:0.###}
+                    scale:
+                      x: {workstationController.transform.localScale.x:0.###}
+                      y: {workstationController.transform.localScale.y:0.###}
+                      z: {workstationController.transform.localScale.z:0.###}
+                    """;
 
         return true;
     }

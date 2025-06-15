@@ -17,9 +17,9 @@ using Utils.NonAllocLINQ;
 namespace CameraSystem.Managers;
 internal sealed class CameraManager : IDisposable
 {
-    internal static CameraManager Instance => Plugin.Instance.CameraManager;
+    internal static CameraManager Instance => CameraSystem.Instance.CameraManager;
 
-    internal bool IsCameraSystemEnabled { get; private set; } = Plugin.Instance.Config.IsCameraSystemEnabledByDefault;
+    internal bool IsCameraSystemEnabled { get; private set; } = CameraSystem.Instance.Config.IsCameraSystemEnabledByDefault;
     internal List<WorkstationController> WorkstationControllers { get; set; } = new();
 
     private readonly List<Watcher> _watchers = new();
@@ -36,10 +36,10 @@ internal sealed class CameraManager : IDisposable
         player.Role.Set(RoleTypeId.Scp079, RoleSpawnFlags.None);
         player.CurrentItem = null;
 
-        player.ShowHint(Plugin.Instance.Translation.ConnectionSuccessMessage);
+        player.ShowHint(CameraSystem.Instance.Translation.ConnectionSuccessMessage);
     }
 
-    internal void Disconnect(Player player, DamageHandler damageHandler = null)
+    internal void Disconnect(Player player, DamageHandler? damageHandler = null)
     {
         if (!TryGetWatcher(player, out Watcher watcher))
             return;
@@ -47,6 +47,7 @@ internal sealed class CameraManager : IDisposable
         try
         {
             watcher.Player.Role.Set(watcher.PlayerSnapshot.Role, RoleSpawnFlags.None);
+            watcher.Player.IsSpawnProtected = false;
             watcher.Player.Position = watcher.PlayerSnapshot.Position;
             watcher.Player.Emotion = watcher.PlayerSnapshot.Emotion;
             watcher.Player.ArtificialHealth = watcher.PlayerSnapshot.ArtificialHealth;
@@ -59,7 +60,7 @@ internal sealed class CameraManager : IDisposable
             if (damageHandler is not null && player.IsAlive)
                 watcher.Player.Hurt(damageHandler);
 
-            watcher.Player.ShowHint(Plugin.Instance.Translation.DisconnectionMessage);
+            watcher.Player.ShowHint(CameraSystem.Instance.Translation.DisconnectionMessage);
         }
         catch (Exception ex)
         {
@@ -87,7 +88,7 @@ internal sealed class CameraManager : IDisposable
             }
 
             scp079Role.LoseSignal(3f);
-            player.ShowHint(Plugin.Instance.Translation.CameraSystemDisabledMessage);
+            player.ShowHint(CameraSystem.Instance.Translation.CameraSystemDisabledMessage);
 
             Timing.CallDelayed(3f, () => Disconnect(player));
         }
