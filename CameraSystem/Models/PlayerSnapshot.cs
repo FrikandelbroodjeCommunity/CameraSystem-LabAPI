@@ -3,7 +3,6 @@ using System.Linq;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
-using Exiled.API.Features.Items;
 using PlayerRoles;
 using PlayerRoles.FirstPersonControl.Thirdperson.Subcontrollers;
 using UnityEngine;
@@ -21,7 +20,7 @@ internal class PlayerSnapshot
     internal Vector3 Position { get; }
     internal RoleTypeId Role { get; }
     internal Vector3 Scale { get; }
-    internal Item CurrentItem { get; }
+    internal Quaternion Rotation { get; }
 
     internal PlayerSnapshot(Player player)
     {
@@ -38,6 +37,6 @@ internal class PlayerSnapshot
         Position = player.Position;
         Role = player.Role.Type;
         Scale = player.Scale;
-        CurrentItem = player.CurrentItem;
+        Rotation = player.Rotation;
     }
 }

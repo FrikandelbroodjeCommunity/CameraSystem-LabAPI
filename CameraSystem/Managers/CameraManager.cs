@@ -5,7 +5,6 @@ using CameraSystem.Models;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.API.Features.DamageHandlers;
-using Exiled.API.Features.Items;
 using Exiled.API.Features.Roles;
 using InventorySystem.Items.Firearms.Attachments;
 using MEC;
@@ -48,6 +47,7 @@ internal sealed class CameraManager : IDisposable
         {
             watcher.Player.Role.Set(watcher.PlayerSnapshot.Role, RoleSpawnFlags.None);
             watcher.Player.IsSpawnProtected = false;
+            watcher.Player.Rotation = watcher.PlayerSnapshot.Rotation;
             watcher.Player.Position = watcher.PlayerSnapshot.Position;
             watcher.Player.Emotion = watcher.PlayerSnapshot.Emotion;
             watcher.Player.ArtificialHealth = watcher.PlayerSnapshot.ArtificialHealth;
@@ -152,7 +152,7 @@ internal sealed class CameraManager : IDisposable
             {
                 try
                 {
-                    if (watcher.Player is not null)
+                    if (watcher.Player.IsConnected)
                         Disconnect(watcher.Player);
 
                     if (watcher.Npc is not null && watcher.Npc.IsAlive)

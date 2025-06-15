@@ -30,11 +30,12 @@ internal class Watcher
     {
         Npc npc = Npc.Spawn(PlayerSnapshot.CustomName, PlayerSnapshot.Role, PlayerSnapshot.Position);
 
-        npc.CustomInfo = $"{PlayerSnapshot.CustomInfo}{CameraSystem.Instance.Translation.WatchingCamerasPostfix}";
+        npc.CustomInfo = PlayerSnapshot.CustomInfo + CameraSystem.Instance.Translation.WatchingCamerasPostfix;
         npc.Emotion = PlayerSnapshot.Emotion;
         npc.Health = PlayerSnapshot.Health;
         npc.ArtificialHealth = PlayerSnapshot.ArtificialHealth;
 
+        npc.Rotation = PlayerSnapshot.Rotation;
         npc.Scale = PlayerSnapshot.Scale;
         npc.InfoArea &= ~PlayerInfoArea.Badge;
         npc.CustomName = PlayerSnapshot.CustomName;
