@@ -28,9 +28,12 @@ internal class Watcher
 
     private Npc SpawnNpc()
     {
-        Npc npc = Npc.Spawn(PlayerSnapshot.CustomName, PlayerSnapshot.Role, PlayerSnapshot.Position);
+        Npc npc = Npc.Spawn(PlayerSnapshot.Nickname, PlayerSnapshot.Role, PlayerSnapshot.Position);
 
-        npc.CustomInfo = PlayerSnapshot.CustomInfo + CameraSystem.Instance.Translation.WatchingCamerasPostfix;
+        string newCustomInfo = PlayerSnapshot.CustomInfo + CameraSystem.Instance.Translation.WatchingCamerasPostfix;
+        if (!string.IsNullOrEmpty(newCustomInfo))
+            npc.CustomInfo = newCustomInfo;
+
         npc.Emotion = PlayerSnapshot.Emotion;
         npc.Health = PlayerSnapshot.Health;
         npc.ArtificialHealth = PlayerSnapshot.ArtificialHealth;
@@ -38,7 +41,8 @@ internal class Watcher
         npc.Rotation = PlayerSnapshot.Rotation;
         npc.Scale = PlayerSnapshot.Scale;
         npc.InfoArea &= ~PlayerInfoArea.Badge;
-        npc.CustomName = PlayerSnapshot.CustomName;
+        if (!string.IsNullOrEmpty(PlayerSnapshot.CustomName))
+            npc.CustomName = PlayerSnapshot.CustomName;
 
         return npc;
     }

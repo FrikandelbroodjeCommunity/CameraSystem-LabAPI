@@ -21,6 +21,7 @@ internal class PlayerSnapshot
     internal RoleTypeId Role { get; }
     internal Vector3 Scale { get; }
     internal Quaternion Rotation { get; }
+    internal string Nickname { get; }
 
     internal PlayerSnapshot(Player player)
     {
@@ -38,5 +39,6 @@ internal class PlayerSnapshot
         Role = player.Role.Type;
         Scale = player.Scale;
         Rotation = player.Rotation;
+        Nickname = player.Nickname;
     }
 }

@@ -31,7 +31,7 @@ internal static class EventHandlers
         }
 
         Exiled.Events.Handlers.Scp079.Pinging += OnPinging;
-        Exiled.Events.Handlers.Scp079.Recontaining += OnPlayerEvent;
+        Exiled.Events.Handlers.Scp079.Recontaining += OnRecontaining;
 
         Exiled.Events.Handlers.Scp079.GainingExperience += OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.LockingDown += OnPlayerEvent;
@@ -61,7 +61,7 @@ internal static class EventHandlers
         Exiled.Events.Handlers.Server.RoundStarted -= SpawnWorkstations;
 
         Exiled.Events.Handlers.Scp079.Pinging -= OnPinging;
-        Exiled.Events.Handlers.Scp079.Recontaining -= OnPlayerEvent;
+        Exiled.Events.Handlers.Scp079.Recontaining -= OnRecontaining;
 
         Exiled.Events.Handlers.Scp079.GainingExperience -= OnPlayerEvent;
         Exiled.Events.Handlers.Scp079.LockingDown -= OnPlayerEvent;
@@ -184,6 +184,11 @@ internal static class EventHandlers
             return;
 
         ev.IsAllowed = false;
+    }
+
+    private static void OnRecontaining(RecontainingEventArgs ev)
+    {
+        CameraManager.Instance.DisconnectAll();
     }
 
     private static void OnHurting(HurtingEventArgs ev)

@@ -40,7 +40,7 @@ internal sealed class CameraManager : IDisposable
 
     internal void Disconnect(Player player, DamageHandler? damageHandler = null)
     {
-        if (!TryGetWatcher(player, out Watcher watcher))
+        if (!TryGetWatcher(player, out Watcher watcher) || !watcher.Player.IsConnected)
             return;
 
         try
@@ -71,6 +71,12 @@ internal sealed class CameraManager : IDisposable
             _watchers.Remove(watcher);
             watcher.DestroyNpc();
         }
+    }
+
+    internal void DisconnectAll(DamageHandler? damageHandler = null)
+    {
+        foreach (Watcher watcher in _watchers.ToArray())
+            Disconnect(watcher.Player, damageHandler);
     }
 
     internal void Enable() => IsCameraSystemEnabled = true;
