@@ -1,7 +1,7 @@
 ﻿[![Latest Release](https://img.shields.io/github/v/release/intjiraya/CameraSystem?style=for-the-badge&label=Latest%20Release)](https://github.com/intjiraya/CameraSystem/releases/latest)
 [![Total Downloads](https://img.shields.io/github/downloads/intjiraya/CameraSystem/total?style=for-the-badge&color=brightgreen&label=Total%20Downloads)](https://github.com/intjiraya/CameraSystem/releases)
 ![EXILED Version](https://img.shields.io/badge/EXILED-9.6.0+-blueviolet?style=for-the-badge)
-[![Last Commit](https://img.shields.io/github/last-commit/intjiraya/CameraSystem?style=for-the-badge&color=yellow)](https://github.com/intjiraya/CameraSystem/commits/main)
+[![Last Commit](https://img.shields.io/github/last-commit/intjiraya/CameraSystem?style=for-the-badge&color=yellow)](https://github.com/intjiraya/CameraSystem/commits/master)
 
 # CameraSystem
 
