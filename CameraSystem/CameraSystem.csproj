@@ -8,7 +8,7 @@
         <LangVersion>12.0</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-        <Version>1.1.5</Version>
+        <Version>1.1.6</Version>
         <AssemblyName>CameraSystem</AssemblyName>
         <Authors>Jiraya</Authors>
         <Company>Jiraya</Company>

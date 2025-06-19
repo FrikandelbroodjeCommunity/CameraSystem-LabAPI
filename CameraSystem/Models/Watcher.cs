@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using MEC;
 using Mirror;
 using PlayerRoles;
 
@@ -34,15 +35,19 @@ internal class Watcher
         if (!string.IsNullOrEmpty(newCustomInfo))
             npc.CustomInfo = newCustomInfo;
 
-        npc.Emotion = PlayerSnapshot.Emotion;
         npc.Health = PlayerSnapshot.Health;
         npc.ArtificialHealth = PlayerSnapshot.ArtificialHealth;
 
         npc.Rotation = PlayerSnapshot.Rotation;
         npc.Scale = PlayerSnapshot.Scale;
         npc.InfoArea &= ~PlayerInfoArea.Badge;
+
         if (!string.IsNullOrEmpty(PlayerSnapshot.CustomName))
-            npc.CustomName = PlayerSnapshot.CustomName;
+            Timing.CallDelayed(0.1f, () =>
+            {
+                if (npc.ReferenceHub?.nicknameSync is not null)
+                    npc.CustomName = PlayerSnapshot.CustomName;
+            });
 
         return npc;
     }
