@@ -2,6 +2,7 @@
 using CameraSystem.Enums;
 using CameraSystem.Managers;
 using CameraSystem.Models;
+using InventorySystem.Items.Firearms.Attachments;
 using LabApi.Events.Arguments.Interfaces;
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.Scp079Events;
@@ -61,7 +62,6 @@ internal static class EventHandlers
         Scp079Events.GainingExperience += OnPlayerEvent;
         Scp079Events.UsingTesla += OnPlayerEvent;
 
-        PlayerEvents.ActivatingWorkstation += OnActivatingWorkstation;
         PlayerEvents.TriggeringTesla += OnPlayerEvent;
         PlayerEvents.InteractingElevator += OnPlayerEvent;
         PlayerEvents.Hurting += OnHurting;
@@ -86,7 +86,6 @@ internal static class EventHandlers
         Scp079Events.GainingExperience -= OnPlayerEvent;
         Scp079Events.UsingTesla -= OnPlayerEvent;
 
-        PlayerEvents.ActivatingWorkstation -= OnActivatingWorkstation;
         PlayerEvents.TriggeringTesla -= OnPlayerEvent;
         PlayerEvents.InteractingElevator -= OnPlayerEvent;
         PlayerEvents.Hurting -= OnHurting;
@@ -114,8 +113,8 @@ internal static class EventHandlers
 
         foreach (var presetConfig in CameraSystem.Instance.Config.PresetConfigs)
         {
-            Room targetRoom = Room.Get(presetConfig.RoomType);
-            if (targetRoom is null)
+            var targetRoom = Room.Get(presetConfig.RoomType).FirstOrDefault();
+            if (targetRoom == null)
             {
                 Logger.Warn($"Room {presetConfig.RoomType} not found for preset workstation.");
                 continue;
@@ -143,37 +142,42 @@ internal static class EventHandlers
             $"Successfully spawned {CameraSystem.Instance.Config.PresetConfigs.Length + CameraSystem.Instance.Config.Workstations.Length} workstations in total.");
     }
 
-    private static void OnActivatingWorkstation(ActivatingWorkstationEventArgs ev)
+    internal static bool OnActivatingWorkstation(Player player, WorkstationController controller)
     {
-        if (!CameraManager.Instance.WorkstationControllers.Contains(ev.WorkstationController))
-            return;
-
-        ev.IsAllowed = false;
-
-        if (CameraSystem.Instance.Config.ProhibitedRoles.Contains(ev.Player.Role.Type))
+        if (!CameraManager.Instance.WorkstationControllers.Contains(controller))
         {
-            ev.Player.ShowHint(CameraSystem.Instance.Translation.ProhibitedRoleMessage);
-            return;
+            return true;
+        }
+
+        if (CameraSystem.Instance.Config.ProhibitedRoles.Contains(player.Role))
+        {
+            player.SendHint(CameraSystem.Instance.Config.Translations.ProhibitedRoleMessage, 7);
+            return false;
         }
 
         if (!CameraManager.Instance.IsCameraSystemEnabled)
         {
-            ev.Player.ShowHint(CameraSystem.Instance.Translation.CameraSystemDisabledMessage);
-            return;
+            player.SendHint(CameraSystem.Instance.Config.Translations.CameraSystemDisabledMessage, 7);
+            return false;
         }
 
-        CameraManager.Instance.Connect(ev.Player);
+        CameraManager.Instance.Connect(player);
+        return false;
     }
 
     private static void OnDying(PlayerDyingEventArgs ev)
     {
-        if (!CameraManager.Instance.TryGetWatcher(ev.Player.ReferenceHub, out Watcher watcher))
+        if (!CameraManager.Instance.TryGetWatcher(ev.Player, out var watcher))
+        {
             return;
+        }
 
         ev.IsAllowed = false;
 
-        if (watcher.Player.IsConnected)
+        if (watcher.Player.IsOnline)
+        {
             CameraManager.Instance.Disconnect(watcher.Player, ev.DamageHandler);
+        }
     }
 
     private static void OnPinging(Scp079PingingEventArgs ev)
@@ -209,21 +213,25 @@ internal static class EventHandlers
 
     private static void OnHurting(PlayerHurtingEventArgs ev)
     {
-        if (CameraManager.Instance.TryGetWatcher(ev.Player, out Watcher watcher) && ev.Player == watcher.Npc)
+        if (!CameraManager.Instance.TryGetWatcher(ev.Player, out var watcher) || ev.Player.ReferenceHub != watcher.Npc)
         {
-            CameraManager.Instance.Disconnect(watcher.Player, ev.DamageHandler);
-            ev.IsAllowed = false;
+            return;
         }
+
+        CameraManager.Instance.Disconnect(watcher.Player, ev.DamageHandler);
+        ev.IsAllowed = false;
     }
 
     private static void OnHandcuffing(PlayerCuffingEventArgs ev)
     {
-        if (CameraManager.Instance.TryGetWatcher(ev.Target, out Watcher watcher) && ev.Target == watcher.Npc)
+        if (!CameraManager.Instance.TryGetWatcher(ev.Target, out var watcher) || ev.Target.ReferenceHub != watcher.Npc)
         {
-            CameraManager.Instance.Disconnect(watcher.Player);
-            watcher.Player.Handcuff(ev.Player);
-            ev.IsAllowed = false;
+            return;
         }
+
+        CameraManager.Instance.Disconnect(watcher.Player);
+        watcher.Player.DisarmedBy = ev.Player;
+        ev.IsAllowed = false;
     }
 
     private static void OnLeft(PlayerLeftEventArgs ev)
@@ -237,7 +245,7 @@ internal static class EventHandlers
     private static void OnVoiceChatting(IPlayerEvent ev)
     {
         if (ev is IVoiceMessageEvent voiceMessageEvent and ICancellableEvent cancellableEvent &&
-            CameraManager.Instance.IsWatching(Player.Get(ev.Player)) &&
+            CameraManager.Instance.IsWatching(ev.Player) &&
             voiceMessageEvent.Message.Channel == VoiceChatChannel.ScpChat)
         {
             cancellableEvent.IsAllowed = false;

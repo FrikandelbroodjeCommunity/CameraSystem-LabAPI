@@ -34,6 +34,9 @@
         <Reference Include="Assembly-CSharp-firstpass">
             <HintPath>$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
         </Reference>
+        <Reference Include="CommandSystem.Core">
+            <HintPath>$(SL_REFERENCES)\CommandSystem.Core.dll</HintPath>
+        </Reference>
         <Reference Include="Mirror">
             <HintPath>$(SL_REFERENCES)\Mirror.dll</HintPath>
         </Reference>

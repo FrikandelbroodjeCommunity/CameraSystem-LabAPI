@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
 using CommandSystem;
-using Exiled.Permissions.Extensions;
+using LabApi.Features.Permissions;
 
 namespace CameraSystem.Commands;
+
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 internal sealed class CameraSystemParentCommand : ParentCommand
 {
     public CameraSystemParentCommand() => LoadGeneratedCommands();
 
     public override string Command => "camerasystem";
-    public override string Description => CameraSystem.Instance.Translation.CameraSystemCommandDescription;
+    public override string Description => CameraSystem.Instance.Config?.Translations.CameraSystemCommandDescription;
     public override string[] Aliases { get; } = new[] { "cs", "camera" };
 
     internal const string PermissionPrefix = "camsys.";
@@ -24,14 +25,16 @@ internal sealed class CameraSystemParentCommand : ParentCommand
 
     protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        response = CameraSystem.Instance.Translation.ParentCommandHeader;
+        response = CameraSystem.Instance.Config?.Translations.ParentCommandHeader;
 
-        foreach (ICommand command in AllCommands.Where(c => sender.CheckPermission(PermissionPrefix + c.Command)))
+        foreach (var command in AllCommands.Where(c => sender.HasPermissions(PermissionPrefix + c.Command)))
         {
-            response += string.Format(CameraSystem.Instance.Translation.ParentCommandFormat,
+            response += string.Format(
+                CameraSystem.Instance.Config?.Translations.ParentCommandFormat ?? "",
                 command.Command,
                 string.Join(", ", command.Aliases),
-                command.Description);
+                command.Description
+            );
         }
 
         return false;

@@ -1,54 +1,58 @@
-﻿using Exiled.API.Features;
+﻿using LabApi.Features.Wrappers;
 using MEC;
 using Mirror;
-using PlayerRoles;
+using NetworkManagerUtils.Dummies;
 
 namespace CameraSystem.Models;
+
 internal class Watcher
 {
     internal Player Player { get; }
     internal PlayerSnapshot PlayerSnapshot { get; }
-    internal Npc? Npc { get; }
+    internal ReferenceHub Npc { get; }
+    internal Player NpcPlayer => Player.Get(Npc);
 
     internal Watcher(Player player)
     {
         Player = player;
-        PlayerSnapshot = new(player);
+        PlayerSnapshot = new PlayerSnapshot(player);
         Npc = SpawnNpc();
     }
 
     internal void DestroyNpc()
     {
-        if (Npc is null)
-            return;
-
-        RoundSummary.singleton.OnServerRoleSet(Npc.ReferenceHub, RoleTypeId.None, RoleChangeReason.Destroyed);
-        NetworkServer.DestroyPlayerForConnection(Npc.NetworkIdentity.connectionToClient);
-        Npc.Destroy();
+        if (Npc != null)
+        {
+            NetworkServer.Destroy(Npc.gameObject);
+        }
     }
 
-    private Npc SpawnNpc()
+    private ReferenceHub SpawnNpc()
     {
-        Npc npc = Npc.Spawn(PlayerSnapshot.Nickname, PlayerSnapshot.Role, PlayerSnapshot.Position);
+        var hub = DummyUtils.SpawnDummy(PlayerSnapshot.Nickname);
+        var npcPlayer = Player.Get(hub);
+        npcPlayer.SetRole(PlayerSnapshot.Role);
+        npcPlayer.Position = PlayerSnapshot.Position;
 
-        string newCustomInfo = PlayerSnapshot.CustomInfo + CameraSystem.Instance.Translation.WatchingCamerasPostfix;
+        var newCustomInfo = PlayerSnapshot.CustomInfo +
+                            CameraSystem.Instance.Config?.Translations.WatchingCamerasPostfix;
         if (!string.IsNullOrEmpty(newCustomInfo))
-            npc.CustomInfo = newCustomInfo;
+        {
+            npcPlayer.CustomInfo = newCustomInfo;
+        }
 
-        npc.Health = PlayerSnapshot.Health;
-        npc.ArtificialHealth = PlayerSnapshot.ArtificialHealth;
+        npcPlayer.Health = PlayerSnapshot.Health;
+        npcPlayer.ArtificialHealth = PlayerSnapshot.ArtificialHealth;
 
-        npc.Rotation = PlayerSnapshot.Rotation;
-        npc.Scale = PlayerSnapshot.Scale;
-        npc.InfoArea &= ~PlayerInfoArea.Badge;
+        npcPlayer.Rotation = PlayerSnapshot.Rotation;
+        npcPlayer.Scale = PlayerSnapshot.Scale;
+        npcPlayer.InfoArea &= ~PlayerInfoArea.Badge;
 
         if (!string.IsNullOrEmpty(PlayerSnapshot.CustomName))
-            Timing.CallDelayed(0.1f, () =>
-            {
-                if (npc.ReferenceHub?.nicknameSync is not null)
-                    npc.CustomName = PlayerSnapshot.CustomName;
-            });
+        {
+            Timing.CallDelayed(0.1f, () => { npcPlayer.DisplayName = PlayerSnapshot.CustomName; });
+        }
 
-        return npc;
+        return hub;
     }
 }

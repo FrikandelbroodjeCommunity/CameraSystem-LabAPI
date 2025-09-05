@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel;
-using Exiled.API.Enums;
+using MapGeneration;
 using UnityEngine;
 
 namespace CameraSystem.Models;
+
 public class PresetConfig
 {
     [Description("The room type where the workstation should be spawned (e.g. HczArmory, EzIntercom)")]
-    public RoomType RoomType { get; set; }
+    public RoomName RoomType { get; set; }
 
     [Description("Local position relative to the room")]
     public Vector3 LocalPosition { get; set; }
@@ -21,7 +22,7 @@ public class PresetConfig
     {
     }
 
-    public PresetConfig(RoomType roomType, Vector3 localPosition, Vector3 localRotation, Vector3 scale)
+    public PresetConfig(RoomName roomType, Vector3 localPosition, Vector3 localRotation, Vector3 scale)
     {
         RoomType = roomType;
         LocalPosition = localPosition;

@@ -2,30 +2,33 @@
 using System.Collections.Generic;
 using CameraSystem.Managers;
 using CommandSystem;
-using Exiled.API.Features;
-using Exiled.Permissions.Extensions;
+using LabApi.Features.Console;
+using LabApi.Features.Permissions;
+using LabApi.Features.Wrappers;
 using Utils;
 
 namespace CameraSystem.Commands;
+
 internal class DisconnectCommand : ICommand, IUsageProvider
 {
     public string Command => "disconnect";
-    public string Description => CameraSystem.Instance.Translation.DisconnectCommandDescription;
+    public string Description => CameraSystem.Instance.Config?.Translations.DisconnectCommandDescription;
     public string[] Aliases { get; } = new[] { "d", "dc" };
 
     public string[] Usage { get; } = new[] { "%player%" };
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (!sender.CheckPermission(CameraSystemParentCommand.PermissionPrefix + Command))
+        if (!sender.HasPermissions(CameraSystemParentCommand.PermissionPrefix + Command))
         {
-            response = CameraSystem.Instance.Translation.NoPermission;
+            response = CameraSystem.Instance.Config?.Translations.NoPermission;
             return false;
         }
 
         if (arguments.Count == 0)
         {
-            response = string.Format(CameraSystem.Instance.Translation.InvalidArguments, "1", this.DisplayCommandUsage());
+            response = string.Format(CameraSystem.Instance.Config?.Translations.InvalidArguments, "1",
+                this.DisplayCommandUsage());
             return false;
         }
 
@@ -33,14 +36,17 @@ internal class DisconnectCommand : ICommand, IUsageProvider
 
         if (referenceHubs is null || referenceHubs.Count == 0)
         {
-            response = CameraSystem.Instance.Translation.DisconnectNoPlayersFound;
+            response = CameraSystem.Instance.Config?.Translations.DisconnectNoPlayersFound;
             return false;
         }
 
         foreach (ReferenceHub referenceHub in referenceHubs)
         {
-            if (!Player.TryGet(referenceHub, out Player player))
+            var player = Player.Get(referenceHub);
+            if (player == null)
+            {
                 continue;
+            }
 
             try
             {
@@ -48,13 +54,13 @@ internal class DisconnectCommand : ICommand, IUsageProvider
             }
             catch (Exception ex)
             {
-                response = string.Empty;
-                Log.Error($"Error disconnecting player: {ex}");
+                response = "Error while disconnecting player, see the server logs full the full error!";
+                Logger.Error($"Error disconnecting player: {ex}");
                 return false;
             }
         }
 
-        response = CameraSystem.Instance.Translation.DisconnectSuccess;
+        response = CameraSystem.Instance.Config?.Translations.DisconnectSuccess;
         return true;
     }
 }

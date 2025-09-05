@@ -1,26 +1,31 @@
 ﻿using System.ComponentModel;
-using Exiled.API.Interfaces;
 
 namespace CameraSystem.Configs;
-public class Translation : ITranslation
+
+public class Translation
 {
     [Description("The text appended to a player's custom info when they're watching cameras")]
     public string WatchingCamerasPostfix { get; set; } = "\nWatching Security Cameras";
 
     [Description("The message shown when a player successfully connects to the camera system")]
-    public string ConnectionSuccessMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>You have successfully connected to the security camera system.\nPress E to exit.</b></size></color>";
+    public string ConnectionSuccessMessage { get; set; } =
+        "\n\n<color=#FAFF86><size=21><b>You have successfully connected to the security camera system.\nPress E to exit.</b></size></color>";
 
     [Description("The message shown when a player disconnects from the camera system")]
-    public string DisconnectionMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>You have disconnected from the security camera system.</b></size></color>";
+    public string DisconnectionMessage { get; set; } =
+        "\n\n<color=#FAFF86><size=21><b>You have disconnected from the security camera system.</b></size></color>";
 
     [Description("The message shown when a player connects but the camera system is disabled")]
-    public string CameraSystemDisabledMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>Unable to establish connection...</color>\n<color=#C50000>ERROR: Camera network unreachable. System currently disabled.</color></b></size>";
+    public string CameraSystemDisabledMessage { get; set; } =
+        "\n\n<color=#FAFF86><size=21><b>Unable to establish connection...</color>\n<color=#C50000>ERROR: Camera network unreachable. System currently disabled.</color></b></size>";
 
     [Description("The message shown when a prohibited role tries to use cameras")]
-    public string ProhibitedRoleMessage { get; set; } = "\n\n<color=#FAFF86><size=21><b>Your role cannot interact with the camera system.</b></size></color>";
+    public string ProhibitedRoleMessage { get; set; } =
+        "\n\n<color=#FAFF86><size=21><b>Your role cannot interact with the camera system.</b></size></color>";
 
     [Description("Usage hint for command")]
-    public string InvalidArguments { get; set; } = "To execute this command provide at least {0} arguments!\nUsage: {1}";
+    public string InvalidArguments { get; set; } =
+        "To execute this command provide at least {0} arguments!\nUsage: {1}";
 
     // Parent command messages
     [Description("Description for the parent camera system command")]
@@ -30,7 +35,8 @@ public class Translation : ITranslation
     public string ParentCommandHeader { get; set; } = "Please enter a valid subcommand:";
 
     [Description("Format for listing available commands (command, aliases, description)")]
-    public string ParentCommandFormat { get; set; } = "\n\n<color=FAFF86><b>- {0} ({1})</b></color>\n<color=white>{2}</color>";
+    public string ParentCommandFormat { get; set; } =
+        "\n\n<color=FAFF86><b>- {0} ({1})</b></color>\n<color=white>{2}</color>";
 
     // Shared
     [Description("Message shown when player lacks permission for the command")]
@@ -44,7 +50,8 @@ public class Translation : ITranslation
 
     // ToggleWorkstationUsage command messages
     [Description("Description for the toggle workstation usage command")]
-    public string ToggleWorkstationUsageDescription { get; set; } = "Toggles workstation in/out of the managed list and provides preset data";
+    public string ToggleWorkstationUsageDescription { get; set; } =
+        "Toggles workstation in/out of the managed list and provides preset data";
 
     [Description("Message shown when no workstation is found in view")]
     public string NoWorkstationFound { get; set; } = "No workstation found in view.";

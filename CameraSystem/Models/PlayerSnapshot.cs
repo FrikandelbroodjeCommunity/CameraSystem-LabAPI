@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Exiled.API.Enums;
-using Exiled.API.Extensions;
-using Exiled.API.Features;
+using CustomPlayerEffects;
+using LabApi.Features.Wrappers;
 using PlayerRoles;
 using PlayerRoles.FirstPersonControl.Thirdperson.Subcontrollers;
 using UnityEngine;
 
 namespace CameraSystem.Models;
+
 internal class PlayerSnapshot
 {
-    internal Dictionary<EffectType, (byte Intensity, float Duration)> ActiveEffects { get; }
-    internal Dictionary<AmmoType, ushort> Ammo { get; }
+    internal Dictionary<StatusEffectBase, (byte Intensity, float Duration)> ActiveEffects { get; }
+    internal Dictionary<ItemType, ushort> Ammo { get; }
     internal float ArtificialHealth { get; }
     internal string CustomInfo { get; }
     internal string CustomName { get; }
@@ -26,17 +26,17 @@ internal class PlayerSnapshot
     internal PlayerSnapshot(Player player)
     {
         ActiveEffects = player.ActiveEffects.ToDictionary(
-            effect => effect.GetEffectType(),
+            effect => effect,
             effect => (effect.Intensity, effect.Duration)
         );
-        Ammo = player.Ammo.ToDictionary(kvp => kvp.Key.GetAmmoType(), kvp => kvp.Value);
+        Ammo = player.Ammo.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         ArtificialHealth = player.ArtificialHealth;
-        CustomName = player.CustomName;
+        CustomName = player.DisplayName;
         CustomInfo = player.CustomInfo;
-        Emotion = player.Emotion;
+        Emotion = EmotionSync.Database[player.ReferenceHub];
         Health = player.Health;
         Position = player.Position;
-        Role = player.Role.Type;
+        Role = player.Role;
         Scale = player.Scale;
         Rotation = player.Rotation;
         Nickname = player.Nickname;
