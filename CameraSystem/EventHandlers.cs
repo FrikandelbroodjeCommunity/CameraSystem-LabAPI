@@ -1,129 +1,146 @@
-﻿using CameraSystem.Enums;
+﻿using System.Linq;
+using CameraSystem.Enums;
 using CameraSystem.Managers;
 using CameraSystem.Models;
-using Exiled.API.Enums;
-using Exiled.API.Features;
-using Exiled.Events.EventArgs.Interfaces;
-using Exiled.Events.EventArgs.Player;
-using Exiled.Events.EventArgs.Scp079;
 using LabApi.Events.Arguments.Interfaces;
+using LabApi.Events.Arguments.PlayerEvents;
+using LabApi.Events.Arguments.Scp079Events;
+using LabApi.Events.Arguments.ServerEvents;
+using LabApi.Events.Handlers;
+using LabApi.Features.Wrappers;
+using Mirror;
 using UnityEngine;
 using VoiceChat;
+using Logger = LabApi.Features.Console.Logger;
 
 namespace CameraSystem;
+
 internal static class EventHandlers
 {
+    private static GameObject WorkStationPrefab
+    {
+        get
+        {
+            if (_prefab == null)
+            {
+                _prefab = NetworkClient.prefabs.FirstOrDefault(x => x.Key == 1783091262).Value;
+            }
+
+            return _prefab;
+        }
+    }
+
+    private static GameObject _prefab;
+
     internal static void Register()
     {
         switch (CameraSystem.Instance.Config.SpawnEvent)
         {
             case SpawnEvent.Generated:
-                Exiled.Events.Handlers.Map.Generated += SpawnWorkstations;
+                ServerEvents.MapGenerated += OnMapGenerated;
                 break;
             case SpawnEvent.RoundStarted:
-                Exiled.Events.Handlers.Server.RoundStarted += SpawnWorkstations;
+                ServerEvents.RoundStarted += SpawnWorkstations;
                 break;
             default:
-                Log.Warn($"Invalid spawn event type \"{CameraSystem.Instance.Config.SpawnEvent}\". " +
-                         $"Defaulting to \"{SpawnEvent.Generated}\".");
-                Exiled.Events.Handlers.Map.Generated += SpawnWorkstations;
+                Logger.Warn($"Invalid spawn event type \"{CameraSystem.Instance.Config.SpawnEvent}\". " +
+                            $"Defaulting to \"{SpawnEvent.Generated}\".");
+                ServerEvents.MapGenerated += OnMapGenerated;
                 break;
         }
 
-        Exiled.Events.Handlers.Scp079.Pinging += OnPinging;
-        Exiled.Events.Handlers.Scp079.Recontaining += OnRecontaining;
+        Scp079Events.Pinging += OnPinging;
+        Scp079Events.Recontaining += OnRecontaining;
 
-        Exiled.Events.Handlers.Scp079.GainingExperience += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.LockingDown += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.RoomBlackout += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ZoneBlackout += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.TriggeringDoor += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.InteractingTesla += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ElevatorTeleporting += OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ChangingCamera += OnChangingCamera;
+        // TODO: Make sure camera cannot do anything (opening doors/sending elevators may be possible)
+        Scp079Events.BlackingOutRoom += OnPlayerEvent;
+        Scp079Events.BlackingOutZone += OnPlayerEvent;
+        Scp079Events.ChangingCamera += OnChangingCamera;
+        Scp079Events.LockingDoor += OnPlayerEvent;
+        Scp079Events.LockingDownRoom += OnPlayerEvent;
+        Scp079Events.GainingExperience += OnPlayerEvent;
+        Scp079Events.UsingTesla += OnPlayerEvent;
 
-        Exiled.Events.Handlers.Player.ActivatingWorkstation += OnActivatingWorkstation;
-        Exiled.Events.Handlers.Player.TriggeringTesla += OnPlayerEvent;
-        Exiled.Events.Handlers.Player.InteractingElevator += OnPlayerEvent;
-        Exiled.Events.Handlers.Player.Hurting += OnHurting;
-        Exiled.Events.Handlers.Player.Handcuffing += OnHandcuffing;
-        Exiled.Events.Handlers.Player.Left += OnLeft;
-        Exiled.Events.Handlers.Player.Dying += OnDying;
+        PlayerEvents.ActivatingWorkstation += OnActivatingWorkstation;
+        PlayerEvents.TriggeringTesla += OnPlayerEvent;
+        PlayerEvents.InteractingElevator += OnPlayerEvent;
+        PlayerEvents.Hurting += OnHurting;
+        PlayerEvents.Cuffing += OnHandcuffing;
+        PlayerEvents.Left += OnLeft;
+        PlayerEvents.Dying += OnDying;
 
-        LabApi.Events.Handlers.PlayerEvents.ReceivingVoiceMessage += OnVoiceChatting;
-        LabApi.Events.Handlers.PlayerEvents.SendingVoiceMessage += OnVoiceChatting;
+        PlayerEvents.ReceivingVoiceMessage += OnVoiceChatting;
+        PlayerEvents.SendingVoiceMessage += OnVoiceChatting;
     }
 
     internal static void Unregister()
     {
-        Exiled.Events.Handlers.Map.Generated -= SpawnWorkstations;
-        Exiled.Events.Handlers.Server.RoundStarted -= SpawnWorkstations;
+        ServerEvents.MapGenerated -= OnMapGenerated;
+        ServerEvents.RoundStarted -= SpawnWorkstations;
 
-        Exiled.Events.Handlers.Scp079.Pinging -= OnPinging;
-        Exiled.Events.Handlers.Scp079.Recontaining -= OnRecontaining;
+        Scp079Events.BlackingOutRoom -= OnPlayerEvent;
+        Scp079Events.BlackingOutZone -= OnPlayerEvent;
+        Scp079Events.ChangingCamera -= OnChangingCamera;
+        Scp079Events.LockingDoor -= OnPlayerEvent;
+        Scp079Events.LockingDownRoom -= OnPlayerEvent;
+        Scp079Events.GainingExperience -= OnPlayerEvent;
+        Scp079Events.UsingTesla -= OnPlayerEvent;
 
-        Exiled.Events.Handlers.Scp079.GainingExperience -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.LockingDown -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.RoomBlackout -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ZoneBlackout -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ChangingSpeakerStatus -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.TriggeringDoor -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.InteractingTesla -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ElevatorTeleporting -= OnPlayerEvent;
-        Exiled.Events.Handlers.Scp079.ChangingCamera -= OnChangingCamera;
+        PlayerEvents.ActivatingWorkstation -= OnActivatingWorkstation;
+        PlayerEvents.TriggeringTesla -= OnPlayerEvent;
+        PlayerEvents.InteractingElevator -= OnPlayerEvent;
+        PlayerEvents.Hurting -= OnHurting;
+        PlayerEvents.Cuffing -= OnHandcuffing;
+        PlayerEvents.Left -= OnLeft;
+        PlayerEvents.Dying -= OnDying;
 
-        Exiled.Events.Handlers.Player.ActivatingWorkstation -= OnActivatingWorkstation;
-        Exiled.Events.Handlers.Player.TriggeringTesla -= OnPlayerEvent;
-        Exiled.Events.Handlers.Player.InteractingElevator -= OnPlayerEvent;
-        Exiled.Events.Handlers.Player.Hurting -= OnHurting;
-        Exiled.Events.Handlers.Player.Handcuffing -= OnHandcuffing;
-        Exiled.Events.Handlers.Player.Left -= OnLeft;
-        Exiled.Events.Handlers.Player.Dying -= OnDying;
-
-        LabApi.Events.Handlers.PlayerEvents.ReceivingVoiceMessage -= OnVoiceChatting;
-        LabApi.Events.Handlers.PlayerEvents.SendingVoiceMessage -= OnVoiceChatting;
+        PlayerEvents.ReceivingVoiceMessage -= OnVoiceChatting;
+        PlayerEvents.SendingVoiceMessage -= OnVoiceChatting;
     }
+
+    private static void OnMapGenerated(MapGeneratedEventArgs _) => SpawnWorkstations();
 
     private static void SpawnWorkstations()
     {
-        if (!PrefabHelper.TryGetPrefab(PrefabType.WorkstationStructure, out GameObject prefab))
+        if (WorkStationPrefab == null)
         {
-            Log.Error("Failed to find prefab of type WorkstationStructure.");
+            Logger.Error("Failed to find prefab of type WorkstationStructure.");
             return;
         }
 
-        Log.Debug($"Starting workstation spawn process. Found {CameraSystem.Instance.Config.PresetConfigs.Length} presets " +
-                  $"and {CameraSystem.Instance.Config.Workstations.Length} custom workstations to spawn.");
+        Logger.Debug(
+            $"Starting workstation spawn process. Found {CameraSystem.Instance.Config.PresetConfigs.Length} presets " +
+            $"and {CameraSystem.Instance.Config.Workstations.Length} custom workstations to spawn.");
 
-        foreach (PresetConfig presetConfig in CameraSystem.Instance.Config.PresetConfigs)
+        foreach (var presetConfig in CameraSystem.Instance.Config.PresetConfigs)
         {
             Room targetRoom = Room.Get(presetConfig.RoomType);
             if (targetRoom is null)
             {
-                Log.Warn($"Room {presetConfig.RoomType} not found for preset workstation.");
+                Logger.Warn($"Room {presetConfig.RoomType} not found for preset workstation.");
                 continue;
             }
 
             CameraManager.Instance.CreateWorkstation(
-                prefab,
-                targetRoom.WorldPosition(presetConfig.LocalPosition),
-                targetRoom.transform.rotation * Quaternion.Euler(presetConfig.LocalRotation),
+                WorkStationPrefab,
+                targetRoom.Transform.TransformPoint(presetConfig.LocalPosition),
+                targetRoom.Transform.rotation * Quaternion.Euler(presetConfig.LocalRotation),
                 presetConfig.Scale
             );
         }
 
-        foreach (WorkstationConfig workstationConfig in CameraSystem.Instance.Config.Workstations)
+        foreach (var workstationConfig in CameraSystem.Instance.Config.Workstations)
         {
             CameraManager.Instance.CreateWorkstation(
-                prefab,
+                WorkStationPrefab,
                 workstationConfig.Position,
                 Quaternion.Euler(workstationConfig.Rotation),
                 workstationConfig.Scale
             );
         }
 
-        Log.Debug($"Successfully spawned {CameraSystem.Instance.Config.PresetConfigs.Length + CameraSystem.Instance.Config.Workstations.Length} workstations in total.");
+        Logger.Debug(
+            $"Successfully spawned {CameraSystem.Instance.Config.PresetConfigs.Length + CameraSystem.Instance.Config.Workstations.Length} workstations in total.");
     }
 
     private static void OnActivatingWorkstation(ActivatingWorkstationEventArgs ev)
@@ -148,10 +165,9 @@ internal static class EventHandlers
         CameraManager.Instance.Connect(ev.Player);
     }
 
-    private static void OnDying(DyingEventArgs ev)
+    private static void OnDying(PlayerDyingEventArgs ev)
     {
-        Npc? npc = Npc.Get(ev.Player.ReferenceHub);
-        if (npc is null || !CameraManager.Instance.TryGetWatcher(npc, out Watcher watcher))
+        if (!CameraManager.Instance.TryGetWatcher(ev.Player.ReferenceHub, out Watcher watcher))
             return;
 
         ev.IsAllowed = false;
@@ -160,7 +176,7 @@ internal static class EventHandlers
             CameraManager.Instance.Disconnect(watcher.Player, ev.DamageHandler);
     }
 
-    private static void OnPinging(PingingEventArgs ev)
+    private static void OnPinging(Scp079PingingEventArgs ev)
     {
         if (!CameraManager.Instance.IsWatching(ev.Player))
             return;
@@ -170,15 +186,15 @@ internal static class EventHandlers
         CameraManager.Instance.Disconnect(ev.Player);
     }
 
-    private static void OnPlayerEvent(Exiled.Events.EventArgs.Interfaces.IPlayerEvent ev)
+    private static void OnPlayerEvent(IPlayerEvent ev)
     {
-        if (!CameraManager.Instance.IsWatching(ev.Player))
+        if (!CameraManager.Instance.IsWatching(ev.Player) || ev is not ICancellableEvent cancellableEvent)
             return;
 
-        ((IDeniableEvent)ev).IsAllowed = false;
+        cancellableEvent.IsAllowed = false;
     }
 
-    private static void OnChangingCamera(ChangingCameraEventArgs ev)
+    private static void OnChangingCamera(Scp079ChangingCameraEventArgs ev)
     {
         if (!ev.Camera.IsBeingUsed)
             return;
@@ -186,12 +202,12 @@ internal static class EventHandlers
         ev.IsAllowed = false;
     }
 
-    private static void OnRecontaining(RecontainingEventArgs ev)
+    private static void OnRecontaining(Scp079RecontainingEventArgs ev)
     {
         CameraManager.Instance.DisconnectAll();
     }
 
-    private static void OnHurting(HurtingEventArgs ev)
+    private static void OnHurting(PlayerHurtingEventArgs ev)
     {
         if (CameraManager.Instance.TryGetWatcher(ev.Player, out Watcher watcher) && ev.Player == watcher.Npc)
         {
@@ -200,7 +216,7 @@ internal static class EventHandlers
         }
     }
 
-    private static void OnHandcuffing(HandcuffingEventArgs ev)
+    private static void OnHandcuffing(PlayerCuffingEventArgs ev)
     {
         if (CameraManager.Instance.TryGetWatcher(ev.Target, out Watcher watcher) && ev.Target == watcher.Npc)
         {
@@ -210,7 +226,7 @@ internal static class EventHandlers
         }
     }
 
-    private static void OnLeft(LeftEventArgs ev)
+    private static void OnLeft(PlayerLeftEventArgs ev)
     {
         if (!CameraManager.Instance.IsWatching(ev.Player))
             return;
@@ -218,10 +234,13 @@ internal static class EventHandlers
         CameraManager.Instance.ForceDisconnect(ev.Player);
     }
 
-    private static void OnVoiceChatting(LabApi.Events.Arguments.Interfaces.IPlayerEvent ev)
+    private static void OnVoiceChatting(IPlayerEvent ev)
     {
-        if (CameraManager.Instance.IsWatching(Player.Get(ev.Player)) &&
-            ((IVoiceMessageEvent)ev).Message.Channel == VoiceChatChannel.ScpChat)
-            ((ICancellableEvent)ev).IsAllowed = false;
+        if (ev is IVoiceMessageEvent voiceMessageEvent and ICancellableEvent cancellableEvent &&
+            CameraManager.Instance.IsWatching(Player.Get(ev.Player)) &&
+            voiceMessageEvent.Message.Channel == VoiceChatChannel.ScpChat)
+        {
+            cancellableEvent.IsAllowed = false;
+        }
     }
 }

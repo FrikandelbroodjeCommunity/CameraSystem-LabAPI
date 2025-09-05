@@ -4,10 +4,8 @@
         <TargetFramework>net48</TargetFramework>
         <OutputType>Library</OutputType>
         <PlatformTarget>x64</PlatformTarget>
-        <Nullable>enable</Nullable>
-        <LangVersion>12.0</LangVersion>
+        <LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-
         <Version>1.1.6</Version>
         <AssemblyName>CameraSystem</AssemblyName>
         <Authors>Jiraya</Authors>
@@ -30,6 +28,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>$(SL_REFERENCES)\Assembly-CSharp-Publicized.dll</HintPath>
+        </Reference>
         <Reference Include="Assembly-CSharp-firstpass">
             <HintPath>$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
         </Reference>
@@ -45,7 +46,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ExMod.Exiled" Version="9.6.1" />
         <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+        <PackageReference Include="Northwood.LabAPI" Version="1.1.1" />
     </ItemGroup>
 </Project>

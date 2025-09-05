@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel;
 using CameraSystem.Enums;
 using CameraSystem.Models;
-using Exiled.API.Enums;
-using Exiled.API.Interfaces;
+using MapGeneration;
 using PlayerRoles;
 using UnityEngine;
 
 namespace CameraSystem.Configs;
-public class Config : IConfig
+
+public class Config
 {
     [Description("Whether the CameraSystem plugin is enabled")]
     public bool IsEnabled { get; set; } = true;
@@ -24,12 +24,12 @@ public class Config : IConfig
     [Description("Preset locations where workstations will be automatically spawned")]
     public PresetConfig[] PresetConfigs { get; set; } = new[]
     {
-        new PresetConfig(RoomType.HczArmory, new(1.1f, 0f, 2.1f), new(0f, 180f, 0f), Vector3.one),
-        new PresetConfig(RoomType.EzIntercom, new(-5.4f, 0f, -1.8f), Vector3.zero, Vector3.one),
-        new PresetConfig(RoomType.EzIntercom, new(-6.9f, -5.8f, 1.2f), new(0f, 90f, 0f), new(1f, 1f, 0.7f)),
-        new PresetConfig(RoomType.HczNuke, new(2f, -72.4f, 8.5f), Vector3.zero, Vector3.one),
-        new PresetConfig(RoomType.Lcz914, new(-1.9f, 0f, 5.5f), new(0f, 90f, 0f), Vector3.one),
-        new PresetConfig(RoomType.Lcz914, new(-6.2f, 0f, 3.1f), new(0f, 180f, 0f), Vector3.one)
+        new PresetConfig(RoomName.HczArmory, new(1.1f, 0f, 2.1f), new(0f, 180f, 0f), Vector3.one),
+        new PresetConfig(RoomName.EzIntercom, new(-5.4f, 0f, -1.8f), Vector3.zero, Vector3.one),
+        new PresetConfig(RoomName.EzIntercom, new(-6.9f, -5.8f, 1.2f), new(0f, 90f, 0f), new(1f, 1f, 0.7f)),
+        new PresetConfig(RoomName.HczWarhead, new(2f, -72.4f, 8.5f), Vector3.zero, Vector3.one),
+        new PresetConfig(RoomName.Lcz914, new(-1.9f, 0f, 5.5f), new(0f, 90f, 0f), Vector3.one),
+        new PresetConfig(RoomName.Lcz914, new(-6.2f, 0f, 3.1f), new(0f, 180f, 0f), Vector3.one)
     };
 
     [Description("List of camera workstation configurations including their positions, rotations, and scales")]

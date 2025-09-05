@@ -1,6 +1,6 @@
 ﻿using CameraSystem.Managers;
-using Exiled.API.Features;
 using HarmonyLib;
+using LabApi.Features.Wrappers;
 using PlayerRoles.PlayableScps.Scp079;
 
 namespace CameraSystem.Patches;

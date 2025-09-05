@@ -1,35 +1,37 @@
 ﻿using System;
 using CameraSystem.Configs;
 using CameraSystem.Managers;
-using Exiled.API.Features;
 using HarmonyLib;
+using LabApi.Features;
+using LabApi.Loader.Features.Plugins;
 
 namespace CameraSystem;
-public class CameraSystem : Plugin<Config, Translation>
+
+public class CameraSystem : Plugin<Config>
 {
-    public override string Author => "Jiraya";
     public override string Name => "CameraSystem";
-    public override Version Version { get; } = new(1, 1, 6);
+    public override string Author => "Jiraya";
+    public override string Description => "A plugin that allows players to connect to the facility's security camera system via special workstations.";
+    public override Version Version => new(1, 0, 0);
+    public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
 
-    internal static CameraSystem Instance { get; private set; } = null!;
-    internal CameraManager CameraManager { get; private set; } = null!;
+    internal static CameraSystem Instance { get; private set; }
+    internal CameraManager CameraManager { get; private set; }
 
-    private Harmony _harmony = null!;
+    private Harmony _harmony;
 
-    public override void OnEnabled()
+    public override void Enable()
     {
         Instance = this;
 
-        CameraManager = new();
+        CameraManager = new CameraManager();
         EventHandlers.Register();
 
-        _harmony = new($"com.{Author}.{Name}.{DateTime.Now.Ticks}");
+        _harmony = new Harmony($"com.{Author}.{Name}.{DateTime.Now.Ticks}");
         _harmony.PatchAll();
-
-        base.OnEnabled();
     }
 
-    public override void OnDisabled()
+    public override void Disable()
     {
         _harmony.UnpatchAll();
         _harmony = null!;
@@ -37,10 +39,6 @@ public class CameraSystem : Plugin<Config, Translation>
         EventHandlers.Unregister();
 
         CameraManager.Dispose();
-        CameraManager = null!;
-
-        Instance = null!;
-
-        base.OnDisabled();
+        CameraManager = null;
     }
 }
