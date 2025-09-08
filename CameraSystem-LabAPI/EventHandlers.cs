@@ -1,7 +1,5 @@
 ﻿using System.Linq;
-using CameraSystem.Enums;
 using CameraSystem.Managers;
-using CameraSystem.Models;
 using InventorySystem.Items.Firearms.Attachments;
 using LabApi.Events.Arguments.Interfaces;
 using LabApi.Events.Arguments.PlayerEvents;
@@ -35,20 +33,7 @@ internal static class EventHandlers
 
     internal static void Register()
     {
-        switch (CameraSystem.Instance.Config.SpawnEvent)
-        {
-            case SpawnEvent.Generated:
-                ServerEvents.MapGenerated += OnMapGenerated;
-                break;
-            case SpawnEvent.RoundStarted:
-                ServerEvents.RoundStarted += SpawnWorkstations;
-                break;
-            default:
-                Logger.Warn($"Invalid spawn event type \"{CameraSystem.Instance.Config.SpawnEvent}\". " +
-                            $"Defaulting to \"{SpawnEvent.Generated}\".");
-                ServerEvents.MapGenerated += OnMapGenerated;
-                break;
-        }
+        ServerEvents.MapGenerated += OnMapGenerated;
 
         Scp079Events.Pinging += OnPinging;
         Scp079Events.Recontaining += OnRecontaining;
@@ -76,7 +61,6 @@ internal static class EventHandlers
     internal static void Unregister()
     {
         ServerEvents.MapGenerated -= OnMapGenerated;
-        ServerEvents.RoundStarted -= SpawnWorkstations;
 
         Scp079Events.BlackingOutRoom -= OnPlayerEvent;
         Scp079Events.BlackingOutZone -= OnPlayerEvent;

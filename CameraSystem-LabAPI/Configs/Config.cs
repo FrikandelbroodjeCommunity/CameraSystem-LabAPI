@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using CameraSystem.Enums;
 using CameraSystem.Models;
 using MapGeneration;
 using PlayerRoles;
@@ -9,10 +8,6 @@ namespace CameraSystem.Configs;
 
 public class Config
 {
-    [Description(
-        "When the camera workstations should be spawned. (Generated = during map generation, RoundStarted = when round starts)")]
-    public SpawnEvent SpawnEvent { get; set; } = SpawnEvent.Generated;
-
     [Description("Whether the camera system is enabled by default when the plugin loads")]
     public bool IsCameraSystemEnabledByDefault { get; set; } = true;
 

@@ -82,7 +82,6 @@
         <Compile Include="Commands\ToggleWorkstationUsageCommand.cs" />
         <Compile Include="Configs\Config.cs" />
         <Compile Include="Configs\Translation.cs" />
-        <Compile Include="Enums\SpawnEvent.cs" />
         <Compile Include="EventHandlers.cs" />
         <Compile Include="Managers\CameraManager.cs" />
         <Compile Include="Models\PlayerSnapshot.cs" />
