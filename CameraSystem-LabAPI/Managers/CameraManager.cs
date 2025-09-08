@@ -44,11 +44,11 @@ internal sealed class CameraManager : IDisposable
 
     internal void Disconnect(Player player, DamageHandlerBase damageHandler = null)
     {
-        if (!TryGetWatcher(player, out var watcher) || watcher.Player.IsOnline)
+        if (!TryGetWatcher(player, out var watcher) || watcher.Player.IsOffline)
         {
             return;
         }
-
+        
         try
         {
             watcher.Player.SetRole(watcher.PlayerSnapshot.Role, flags: RoleSpawnFlags.None);

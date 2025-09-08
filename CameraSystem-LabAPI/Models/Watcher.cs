@@ -2,6 +2,7 @@
 using MEC;
 using Mirror;
 using NetworkManagerUtils.Dummies;
+using UnityEngine;
 
 namespace CameraSystem.Models;
 
@@ -32,7 +33,7 @@ internal class Watcher
         var hub = DummyUtils.SpawnDummy(PlayerSnapshot.Nickname);
         var npcPlayer = Player.Get(hub);
         npcPlayer.SetRole(PlayerSnapshot.Role);
-        npcPlayer.Position = PlayerSnapshot.Position;
+        npcPlayer.Position = PlayerSnapshot.Position + Vector3.up * 0.1f;
 
         var newCustomInfo = PlayerSnapshot.CustomInfo +
                             CameraSystem.Instance.Config?.Translations.WatchingCamerasPostfix;

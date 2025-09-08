@@ -49,6 +49,7 @@ internal static class EventHandlers
 
         PlayerEvents.TriggeringTesla += OnPlayerEvent;
         PlayerEvents.InteractingElevator += OnPlayerEvent;
+        PlayerEvents.InteractingDoor += OnOpenDoor;
         PlayerEvents.Hurting += OnHurting;
         PlayerEvents.Cuffing += OnHandcuffing;
         PlayerEvents.Left += OnLeft;
@@ -72,6 +73,7 @@ internal static class EventHandlers
 
         PlayerEvents.TriggeringTesla -= OnPlayerEvent;
         PlayerEvents.InteractingElevator -= OnPlayerEvent;
+        PlayerEvents.InteractingDoor -= OnOpenDoor;
         PlayerEvents.Hurting -= OnHurting;
         PlayerEvents.Cuffing -= OnHandcuffing;
         PlayerEvents.Left -= OnLeft;
@@ -233,6 +235,14 @@ internal static class EventHandlers
             voiceMessageEvent.Message.Channel == VoiceChatChannel.ScpChat)
         {
             cancellableEvent.IsAllowed = false;
+        }
+    }
+
+    private static void OnOpenDoor(PlayerInteractingDoorEventArgs ev)
+    {
+        if (CameraManager.Instance.IsWatching(ev.Player))
+        {
+            ev.IsAllowed = false;
         }
     }
 }

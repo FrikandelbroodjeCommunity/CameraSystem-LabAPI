@@ -9,8 +9,8 @@ public static class WorkstationActivationPatch
 {
     [HarmonyPrefix]
     // ReSharper disable once InconsistentNaming
-    public static void OnEnterWorkstation(ReferenceHub ply, WorkstationController __instance)
+    public static bool OnEnterWorkstation(ReferenceHub ply, WorkstationController __instance)
     {
-        EventHandlers.OnActivatingWorkstation(Player.Get(ply), __instance);
+        return EventHandlers.OnActivatingWorkstation(Player.Get(ply), __instance);
     }
 }
