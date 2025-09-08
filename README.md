@@ -1,13 +1,11 @@
-﻿[![Latest Release](https://img.shields.io/github/v/release/intjiraya/CameraSystem?style=for-the-badge&label=Latest%20Release)](https://github.com/intjiraya/CameraSystem/releases/latest)
-[![Total Downloads](https://img.shields.io/github/downloads/intjiraya/CameraSystem/total?style=for-the-badge&color=brightgreen&label=Total%20Downloads)](https://github.com/intjiraya/CameraSystem/releases)
-![EXILED Version](https://img.shields.io/badge/EXILED-9.6.0+-blueviolet?style=for-the-badge)
-[![Last Commit](https://img.shields.io/github/last-commit/intjiraya/CameraSystem?style=for-the-badge&color=yellow)](https://github.com/intjiraya/CameraSystem/commits/master)
+﻿[![GitHub release](https://flat.badgen.net/github/release/gamendegamer321/CameraSystem-LabAPI/)](https://github.com/gamendegamer321/CameraSystem-LabAPI/releases/latest)
+[![LabAPI Version](https://flat.badgen.net/static/LabAPI%20Version/v1.1.1)](https://github.com/northwood-studios/LabAPI)
+[![Original](https://flat.badgen.net/static/Original/intjiraya?icon=github)](https://github.com/intjiraya/CameraSystem)
+[![License](https://flat.badgen.net/github/license/gamendegamer321/CameraSystem-LabAPI/)](https://github.com/gamendegamer321/CameraSystem-LabAPI/blob/master/LICENSE)
 
-# CameraSystem
+# About CameraSystem
 
 A plugin that allows players to connect to the facility's security camera system via special workstations.
-
-## Features
 
 - Customizable camera workstations placed throughout the facility
 - Players maintain their original appearance via NPC clones while viewing cameras
@@ -15,12 +13,18 @@ A plugin that allows players to connect to the facility's security camera system
 - Blocks inappropriate actions while viewing cameras
 - Flexible configuration with both room-based and absolute positioning
 
-## Installation
+# Installation
 
-1. Place the `CameraSystem.dll` in your `EXILED/Plugins` folder
-2. Configure the plugin in `EXILED/Configs/Plugins/camera_system`
+Place the [latest release](https://github.com/gamendegamer321/CameraSystem-LabAPI/releases/latest) in the LabAPI plugin folder.
 
-## Configuration
+# Usage
+
+1. Approach a configured workstation
+2. Activate it by interacting (default: E key)
+3. You'll enter camera view while your physical body remains at the workstation
+4. Press the interact button (E) again to exit camera view
+
+# Config
 
 ```yaml
 camera_system:
@@ -114,10 +118,3 @@ Here are the default preset locations with screenshots:
     </td>
   </tr>
 </table>
-
-## Usage
-
-1. Approach a configured workstation
-2. Activate it (default: E key)
-3. You'll enter camera view while your physical body remains at the workstation
-4. Press E again to exit camera view
