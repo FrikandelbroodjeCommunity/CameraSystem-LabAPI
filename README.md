@@ -28,9 +28,6 @@ Place the [latest release](https://github.com/gamendegamer321/CameraSystem-LabAP
 
 ```yaml
 camera_system:
-  is_enabled: true
-  debug: false
-  spawn_event: Generated # Generated or RoundStarted
   is_camera_system_enabled_by_default: true
   preset_configs:
   - room_type: EzIntercom
