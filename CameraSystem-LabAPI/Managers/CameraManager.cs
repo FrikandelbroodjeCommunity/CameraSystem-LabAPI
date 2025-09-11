@@ -36,9 +36,7 @@ internal sealed class CameraManager : IDisposable
         Watcher watcher = new(player);
         _watchers.Add(watcher);
 
-        player.SetRole(RoleTypeId.Scp079, flags: RoleSpawnFlags.None);
-        player.CurrentItem = null;
-
+        player.SetRole(RoleTypeId.Scp079);
         player.SendHint(CameraSystem.Instance.Config.Translations.ConnectionSuccessMessage, 7);
     }
 
@@ -48,7 +46,7 @@ internal sealed class CameraManager : IDisposable
         {
             return;
         }
-        
+
         try
         {
             watcher.Player.SetRole(watcher.PlayerSnapshot.Role, flags: RoleSpawnFlags.None);
@@ -70,7 +68,7 @@ internal sealed class CameraManager : IDisposable
 
             if (damageHandler is not null && player.IsAlive)
             {
-                watcher.Player.Damage(damageHandler);
+                Timing.CallDelayed(Timing.WaitForOneFrame, () => { watcher.Player.Damage(damageHandler); });
             }
 
             watcher.Player.SendHint(CameraSystem.Instance.Config.Translations.DisconnectionMessage, 7);

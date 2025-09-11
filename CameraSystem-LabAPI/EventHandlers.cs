@@ -38,7 +38,6 @@ internal static class EventHandlers
         Scp079Events.Pinging += OnPinging;
         Scp079Events.Recontaining += OnRecontaining;
 
-        // TODO: Make sure camera cannot do anything (opening doors/sending elevators may be possible)
         Scp079Events.BlackingOutRoom += OnPlayerEvent;
         Scp079Events.BlackingOutZone += OnPlayerEvent;
         Scp079Events.ChangingCamera += OnChangingCamera;
@@ -55,8 +54,8 @@ internal static class EventHandlers
         PlayerEvents.Left += OnLeft;
         PlayerEvents.Dying += OnDying;
 
-        PlayerEvents.ReceivingVoiceMessage += OnVoiceChatting;
-        PlayerEvents.SendingVoiceMessage += OnVoiceChatting;
+        PlayerEvents.ReceivingVoiceMessage += OnReceivingVoiceChat;
+        PlayerEvents.SendingVoiceMessage += OnSendingVoiceChat;
     }
 
     internal static void Unregister()
@@ -79,8 +78,8 @@ internal static class EventHandlers
         PlayerEvents.Left -= OnLeft;
         PlayerEvents.Dying -= OnDying;
 
-        PlayerEvents.ReceivingVoiceMessage -= OnVoiceChatting;
-        PlayerEvents.SendingVoiceMessage -= OnVoiceChatting;
+        PlayerEvents.ReceivingVoiceMessage -= OnReceivingVoiceChat;
+        PlayerEvents.SendingVoiceMessage -= OnSendingVoiceChat;
     }
 
     private static void OnMapGenerated(MapGeneratedEventArgs _) => SpawnWorkstations();
@@ -228,13 +227,19 @@ internal static class EventHandlers
         CameraManager.Instance.ForceDisconnect(ev.Player);
     }
 
-    private static void OnVoiceChatting(IPlayerEvent ev)
+    private static void OnSendingVoiceChat(PlayerSendingVoiceMessageEventArgs ev)
     {
-        if (ev is IVoiceMessageEvent voiceMessageEvent and ICancellableEvent cancellableEvent &&
-            CameraManager.Instance.IsWatching(ev.Player) &&
-            voiceMessageEvent.Message.Channel == VoiceChatChannel.ScpChat)
+        if (CameraManager.Instance.IsWatching(ev.Player))
         {
-            cancellableEvent.IsAllowed = false;
+            ev.IsAllowed = false;
+        }
+    }
+
+    private static void OnReceivingVoiceChat(PlayerReceivingVoiceMessageEventArgs ev)
+    {
+        if (ev.Message.Channel == VoiceChatChannel.ScpChat && CameraManager.Instance.IsWatching(ev.Player))
+        {
+            ev.IsAllowed = false;
         }
     }
 
