@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using InventorySystem.Items.Firearms.Attachments;
+using LabApi.Features.Console;
 using LabApi.Features.Wrappers;
 
 namespace CameraSystem.Patches;
@@ -11,6 +13,14 @@ public static class WorkstationActivationPatch
     // ReSharper disable once InconsistentNaming
     public static bool OnEnterWorkstation(ReferenceHub ply, WorkstationController __instance)
     {
-        return EventHandlers.OnActivatingWorkstation(Player.Get(ply), __instance);
+        try
+        {
+            return EventHandlers.OnActivatingWorkstation(Player.Get(ply), __instance);
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Failed to connect player: {e}");
+            return true;
+        }
     }
 }

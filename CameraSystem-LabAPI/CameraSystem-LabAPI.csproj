@@ -89,6 +89,7 @@
         <Compile Include="Models\Watcher.cs" />
         <Compile Include="Models\WorkstationConfig.cs" />
         <Compile Include="Patches\Scp079ScanningPossiblePatch.cs" />
+        <Compile Include="Patches\Scp330InterobjectPatch.cs" />
         <Compile Include="Patches\WorkstationActivationPatch.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>

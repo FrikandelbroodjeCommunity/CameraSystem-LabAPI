@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CameraSystem.Managers;
 using CustomPlayerEffects;
 using LabApi.Features.Wrappers;
 using PlayerRoles;
@@ -22,6 +23,7 @@ internal class PlayerSnapshot
     internal Vector3 Scale { get; }
     internal Quaternion Rotation { get; }
     internal string Nickname { get; }
+    internal int Scp330Uses { get; }
 
     internal PlayerSnapshot(Player player)
     {
@@ -40,5 +42,11 @@ internal class PlayerSnapshot
         Scale = player.Scale;
         Rotation = player.Rotation;
         Nickname = player.Nickname;
+
+        if (CameraManager.Scp330Interobject != null)
+        {
+            Scp330Uses = CameraManager.Scp330Interobject.PreviousUses
+                .Count(x => x.LifeIdentifier == player.RoleBase.UniqueLifeIdentifier);
+        }
     }
 }

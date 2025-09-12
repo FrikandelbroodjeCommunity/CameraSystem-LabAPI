@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using CameraSystem.Models;
+using Footprinting;
+using Interactables.Interobjects;
 using InventorySystem.Items.Firearms.Attachments;
 using LabApi.Features.Wrappers;
 using MEC;
@@ -23,6 +25,7 @@ internal sealed class CameraManager : IDisposable
     internal bool IsCameraSystemEnabled { get; private set; } =
         CameraSystem.Instance.Config.IsCameraSystemEnabledByDefault;
 
+    internal static Scp330Interobject Scp330Interobject;
     internal List<WorkstationController> WorkstationControllers { get; set; } = new();
 
     private readonly List<Watcher> _watchers = new();
@@ -55,6 +58,16 @@ internal sealed class CameraManager : IDisposable
             watcher.Player.ReferenceHub.ServerSetEmotionPreset(watcher.PlayerSnapshot.Emotion);
             watcher.Player.ArtificialHealth = watcher.PlayerSnapshot.ArtificialHealth;
             watcher.Player.Health = watcher.PlayerSnapshot.Health;
+
+            if (Scp330Interobject != null)
+            {
+                var current330Count = Scp330Interobject.PreviousUses
+                    .Count(x => x.LifeIdentifier == watcher.Player.RoleBase.UniqueLifeIdentifier);
+                for (var i = current330Count; i < watcher.PlayerSnapshot.Scp330Uses; i++)
+                {
+                    Scp330Interobject.PreviousUses.Add(new Footprint(watcher.Player.ReferenceHub));
+                }
+            }
 
             foreach (var pair in watcher.PlayerSnapshot.Ammo)
             {
