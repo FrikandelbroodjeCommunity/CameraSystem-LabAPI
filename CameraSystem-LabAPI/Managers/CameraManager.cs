@@ -39,7 +39,7 @@ internal sealed class CameraManager : IDisposable
         Watcher watcher = new(player);
         _watchers.Add(watcher);
 
-        player.SetRole(RoleTypeId.Scp079);
+        player.SetRole(RoleTypeId.Scp079, RoleChangeReason.None, flags: RoleSpawnFlags.None);
         player.SendHint(CameraSystem.Instance.Config.Translations.ConnectionSuccessMessage, 7);
     }
 
@@ -52,7 +52,7 @@ internal sealed class CameraManager : IDisposable
 
         try
         {
-            watcher.Player.SetRole(watcher.PlayerSnapshot.Role, flags: RoleSpawnFlags.None);
+            watcher.Player.SetRole(watcher.PlayerSnapshot.Role, RoleChangeReason.None, flags: RoleSpawnFlags.None);
             watcher.Player.Rotation = watcher.PlayerSnapshot.Rotation;
             watcher.Player.Position = watcher.PlayerSnapshot.Position;
             watcher.Player.ReferenceHub.ServerSetEmotionPreset(watcher.PlayerSnapshot.Emotion);
