@@ -8,6 +8,7 @@ using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using Mirror;
+using PlayerRoles;
 using UnityEngine;
 using VoiceChat;
 using Logger = LabApi.Features.Console.Logger;
@@ -47,7 +48,6 @@ internal static class EventHandlers
         Scp079Events.UsingTesla += OnPlayerEvent;
 
         PlayerEvents.TriggeringTesla += OnPlayerEvent;
-        PlayerEvents.InteractingElevator += OnPlayerEvent;
         PlayerEvents.InteractingDoor += OnOpenDoor;
         PlayerEvents.Hurting += OnHurting;
         PlayerEvents.Cuffing += OnHandcuffing;
@@ -71,7 +71,6 @@ internal static class EventHandlers
         Scp079Events.UsingTesla -= OnPlayerEvent;
 
         PlayerEvents.TriggeringTesla -= OnPlayerEvent;
-        PlayerEvents.InteractingElevator -= OnPlayerEvent;
         PlayerEvents.InteractingDoor -= OnOpenDoor;
         PlayerEvents.Hurting -= OnHurting;
         PlayerEvents.Cuffing -= OnHandcuffing;
@@ -82,9 +81,7 @@ internal static class EventHandlers
         PlayerEvents.SendingVoiceMessage -= OnSendingVoiceChat;
     }
 
-    private static void OnMapGenerated(MapGeneratedEventArgs _) => SpawnWorkstations();
-
-    private static void SpawnWorkstations()
+    private static void OnMapGenerated(MapGeneratedEventArgs _)
     {
         if (WorkStationPrefab == null)
         {
