@@ -1,7 +1,7 @@
-﻿[![GitHub release](https://flat.badgen.net/github/release/gamendegamer321/CameraSystem-LabAPI/)](https://github.com/gamendegamer321/CameraSystem-LabAPI/releases/latest)
+﻿[![GitHub release](https://flat.badgen.net/github/release/FrikandelbroodjeCommunity/CameraSystem-LabAPI/)](https://github.com/FrikandelbroodjeCommunity/CameraSystem-LabAPI/releases/latest)
 [![LabAPI Version](https://flat.badgen.net/static/LabAPI%20Version/v1.1.1)](https://github.com/northwood-studios/LabAPI)
 [![Original](https://flat.badgen.net/static/Original/intjiraya?icon=github)](https://github.com/intjiraya/CameraSystem)
-[![License](https://flat.badgen.net/github/license/gamendegamer321/CameraSystem-LabAPI/)](https://github.com/gamendegamer321/CameraSystem-LabAPI/blob/master/LICENSE)
+[![License](https://flat.badgen.net/github/license/FrikandelbroodjeCommunity/CameraSystem-LabAPI/)](https://github.com/FrikandelbroodjeCommunity/CameraSystem-LabAPI/blob/master/LICENSE)
 
 # About CameraSystem
 
