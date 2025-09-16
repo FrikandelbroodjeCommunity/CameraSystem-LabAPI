@@ -1,7 +1,7 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.12.33121.228
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraSystem-LabAPI", "CameraSystem-LabAPI\CameraSystem-LabAPI.csproj", "{C1E40B87-317D-47BB-BA8C-CD97C45CBD59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraSystem", "CameraSystem\CameraSystem.csproj", "{C1E40B87-317D-47BB-BA8C-CD97C45CBD59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
