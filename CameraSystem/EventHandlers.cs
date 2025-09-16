@@ -131,7 +131,7 @@ internal static class EventHandlers
             return true;
         }
 
-        if (CameraSystem.Instance.Config.ProhibitedRoles.Contains(player.Role))
+        if (player.Team == Team.SCPs || CameraSystem.Instance.Config.ProhibitedRoles.Contains(player.Role))
         {
             player.SendHint(CameraSystem.Instance.Config.Translations.ProhibitedRoleMessage, 7);
             return false;

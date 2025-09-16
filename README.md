@@ -15,7 +15,8 @@ A plugin that allows players to connect to the facility's security camera system
 
 # Installation
 
-Place the [latest release](https://github.com/gamendegamer321/CameraSystem-LabAPI/releases/latest) in the LabAPI plugin folder.
+Place the [latest release](https://github.com/gamendegamer321/CameraSystem-LabAPI/releases/latest) in the LabAPI plugin
+folder.
 
 # Usage
 
@@ -24,27 +25,29 @@ Place the [latest release](https://github.com/gamendegamer321/CameraSystem-LabAP
 3. You'll enter camera view while your physical body remains at the workstation
 4. Press the interact button (E) again to exit camera view
 
+## Commands
+
+The parent command `camerasystem` (aliases: `cs`, `camera`) contains the following sub-commands.
+
+| Sub-command              | Aliases   | Usage            | Required permission             | Description                                                                                                                                                      |
+|--------------------------|-----------|------------------|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `disconnect`             | `d`, `dc` | `cs dc <player>` | `camsys.disconnect`             | Forces the given player to disconnect from the camera.                                                                                                           |
+| `toggle`                 | `t`       | `cs toggle`      | `camsys.toggle`                 | Toggles the CameraSystem on/off.                                                                                                                                 |
+| `toggleworkstationusage` | `twu`     | `cs twu`         | `camsys.toggleworkstationusage` | When looking at a workstation, this will add/remove that workstation from the CamerySystem. Adding will cause the workstation to behave as a camera workstation. |
+
 # Config
 
-```yaml
-camera_system:
-  is_camera_system_enabled_by_default: true
-  preset_configs:
-  - room_type: EzIntercom
-    local_position: {x: -6.9, y: -5.8, z: 1.2}
-    local_rotation: {x: 0, y: 90, z: 0}
-    scale: {x: 1, y: 1, z: 0.7}
-  workstations:
-  - position: {x: 0, y: 0, z: 0}
-    rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-```
+| Config                                | Default | Meaning                                                                                                                                         |
+|---------------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| `is_camera_system_enabled_by_default` | `true`  | When set to false, the CameraSystem is not enabled when the plugin starts. Instead the system is only enabled once the `toggle` command is run. |
+| `preset_configs`                      | ...     | Presets to spawn workstations based on an offset within a room (see [room presets](#Room-based-Presets)).                                       |
+| `workstations`                        | ...     | Presets to spawn workstations based on absolute positions in the map (see [absolute presets](#Absolute-Position-Presets)).                      |
+| `prohibited_roles`                    | nothing | Roles that are not allowed to use the CameraSystem. SCPs are prohibited by default, so they do not need to be included in this list.            |
+| `translations`                        | ...     | The different messages that can be displayed by the CameraSystem.                                                                               |
 
-## Preset Configuration Guide
+## Room-based Presets
 
-The plugin offers two ways to place workstations:
-
-### 1. Room-based Presets
+Each room preset needs to follow the following structure:
 
 ```yaml
 preset_configs:
@@ -55,6 +58,7 @@ preset_configs:
 ```
 
 Benefits:
+
 - Automatically adapts to room position changes
 - Easier to configure (positions are relative to room)
 - More intuitive placement
@@ -70,7 +74,9 @@ Previous presets are now available as room-based configurations:
 | Scp914     | Lcz914       | (-1.9, 0, 5.5)    | (0, 90, 0)     | (1, 1, 1)   |
 | Scp9142    | Lcz914       | (-6.2, 0, 3.1)    | (0, 180, 0)    | (1, 1, 1)   |
 
-### 2. Absolute Position Workstations
+## Absolute Position Presets
+
+Each absolute position preset needs to follow the following structure:
 
 ```yaml
 workstations:

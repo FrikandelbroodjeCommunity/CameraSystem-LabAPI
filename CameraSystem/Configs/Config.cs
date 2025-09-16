@@ -30,14 +30,7 @@ public class Config
     };
 
     [Description("Roles that are prohibited from interacting with camera workstations")]
-    public RoleTypeId[] ProhibitedRoles { get; set; } =
-    {
-        RoleTypeId.Scp096,
-        RoleTypeId.Scp106,
-        RoleTypeId.Scp173,
-        RoleTypeId.Scp0492,
-        RoleTypeId.Scp3114
-    };
+    public RoleTypeId[] ProhibitedRoles { get; set; } = [];
 
     [Description("The translations used")] public Translation Translations { get; set; } = new();
 }
