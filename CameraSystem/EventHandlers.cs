@@ -23,7 +23,8 @@ internal static class EventHandlers
         {
             if (_prefab == null)
             {
-                _prefab = NetworkClient.prefabs.FirstOrDefault(x => x.Key == 1783091262).Value;
+                _prefab =
+                    NetworkClient.prefabs.FirstOrDefault(x => x.Key == 1783091262).Value;
             }
 
             return _prefab;
@@ -34,7 +35,7 @@ internal static class EventHandlers
 
     internal static void Register()
     {
-        ServerEvents.MapGenerated += OnMapGenerated;
+        ServerEvents.WaitingForPlayers += OnWaitingForPlayers;
 
         Scp079Events.Pinging += OnPinging;
         Scp079Events.Recontaining += OnRecontaining;
@@ -60,7 +61,7 @@ internal static class EventHandlers
 
     internal static void Unregister()
     {
-        ServerEvents.MapGenerated -= OnMapGenerated;
+        ServerEvents.WaitingForPlayers -= OnWaitingForPlayers;
 
         Scp079Events.BlackingOutRoom -= OnPlayerEvent;
         Scp079Events.BlackingOutZone -= OnPlayerEvent;
@@ -81,7 +82,7 @@ internal static class EventHandlers
         PlayerEvents.SendingVoiceMessage -= OnSendingVoiceChat;
     }
 
-    private static void OnMapGenerated(MapGeneratedEventArgs _)
+    private static void OnWaitingForPlayers()
     {
         if (WorkStationPrefab == null)
         {
