@@ -31,7 +31,7 @@ internal class Watcher
 
     private ReferenceHub SpawnNpc()
     {
-        var hub = DummyUtils.SpawnDummy(PlayerSnapshot.Nickname);
+        var hub = DummyUtils.SpawnDummy($"{PlayerSnapshot.Nickname} (cams)");
         var npcPlayer = Player.Get(hub);
         npcPlayer.SetRole(PlayerSnapshot.Role, RoleChangeReason.None, RoleSpawnFlags.None);
         npcPlayer.Position = PlayerSnapshot.Position + Vector3.up * 0.1f;
@@ -52,7 +52,7 @@ internal class Watcher
 
         if (!string.IsNullOrEmpty(PlayerSnapshot.CustomName))
         {
-            Timing.CallDelayed(0.1f, () => { npcPlayer.DisplayName = PlayerSnapshot.CustomName; });
+            Timing.CallDelayed(0.1f, () => { npcPlayer.DisplayName = $"{PlayerSnapshot.CustomName} (cams)"; });
         }
 
         return hub;
