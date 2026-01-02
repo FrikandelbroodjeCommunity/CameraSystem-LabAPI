@@ -24,6 +24,7 @@ internal class PlayerSnapshot
     internal Quaternion Rotation { get; }
     internal string Nickname { get; }
     internal int Scp330Uses { get; }
+    internal ushort? EquippedItem { get; }
 
     internal PlayerSnapshot(Player player)
     {
@@ -42,6 +43,7 @@ internal class PlayerSnapshot
         Scale = player.Scale;
         Rotation = player.Rotation;
         Nickname = player.Nickname;
+        EquippedItem = player.CurrentItem?.Serial;
 
         if (CameraManager.Scp330Interobject != null)
         {

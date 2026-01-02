@@ -41,6 +41,8 @@ internal sealed class CameraManager : IDisposable
 
         player.SetRole(RoleTypeId.Scp079, RoleChangeReason.None, flags: RoleSpawnFlags.None);
         player.SendHint(CameraSystem.Instance.Config.Translations.ConnectionSuccessMessage, 7);
+
+        player.CurrentItem = null;
     }
 
     internal void Disconnect(Player player, DamageHandlerBase damageHandler = null)
@@ -58,6 +60,17 @@ internal sealed class CameraManager : IDisposable
             watcher.Player.ReferenceHub.ServerSetEmotionPreset(watcher.PlayerSnapshot.Emotion);
             watcher.Player.ArtificialHealth = watcher.PlayerSnapshot.ArtificialHealth;
             watcher.Player.Health = watcher.PlayerSnapshot.Health;
+
+            if (watcher.PlayerSnapshot.EquippedItem.HasValue)
+            {
+                var item = watcher.Player.Items.FirstOrDefault(x =>
+                    x.Serial == watcher.PlayerSnapshot.EquippedItem.Value);
+
+                if (item != null)
+                {
+                    watcher.Player.CurrentItem = item;
+                }
+            }
 
             if (Scp330Interobject != null)
             {
