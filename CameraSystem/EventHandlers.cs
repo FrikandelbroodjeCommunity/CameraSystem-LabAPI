@@ -157,7 +157,7 @@ internal static class EventHandlers
 
         ev.IsAllowed = false;
 
-        if (watcher.Player.IsOnline)
+        if (!watcher.Player.IsDestroyed)
         {
             CameraManager.Instance.Disconnect(watcher.Player, ev.DamageHandler);
         }

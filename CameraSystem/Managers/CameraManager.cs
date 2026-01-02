@@ -47,7 +47,7 @@ internal sealed class CameraManager : IDisposable
 
     internal void Disconnect(Player player, DamageHandlerBase damageHandler = null)
     {
-        if (!TryGetWatcher(player, out var watcher) || watcher.Player.IsOffline)
+        if (!TryGetWatcher(player, out var watcher) || watcher.Player.IsDestroyed)
         {
             return;
         }
@@ -201,7 +201,7 @@ internal sealed class CameraManager : IDisposable
             {
                 try
                 {
-                    if (watcher.Player.IsOnline)
+                    if (!watcher.Player.IsDestroyed)
                         Disconnect(watcher.Player);
 
                     if (watcher.Npc is not null && watcher.Npc.IsAlive())
