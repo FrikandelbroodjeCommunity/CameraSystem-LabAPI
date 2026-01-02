@@ -34,7 +34,7 @@ internal class PlayerSnapshot
         );
         Ammo = player.Ammo.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         ArtificialHealth = player.ArtificialHealth;
-        CustomName = player.DisplayName;
+        CustomName = player.DisplayName == player.Nickname ? null : player.DisplayName;
         CustomInfo = player.CustomInfo;
         Emotion = EmotionSync.Database[player.ReferenceHub];
         Health = player.Health;

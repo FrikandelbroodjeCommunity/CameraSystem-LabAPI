@@ -12,7 +12,7 @@ public class CameraSystem : Plugin<Config>
     public override string Name => "CameraSystem";
     public override string Author => "Jiraya";
     public override string Description => "A plugin that allows players to connect to the facility's security camera system via special workstations.";
-    public override Version Version => new(1, 1, 2);
+    public override Version Version => new(1, 1, 4);
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
 
     internal static CameraSystem Instance { get; private set; }
