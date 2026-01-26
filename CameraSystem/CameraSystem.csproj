@@ -51,8 +51,8 @@
         <Reference Include="CommandSystem.Core">
             <HintPath>$(SL_REFERENCES)\CommandSystem.Core.dll</HintPath>
         </Reference>
-        <Reference Include="LabApi, Version=1.1.2.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\Northwood.LabAPI.1.1.2\lib\net48\LabApi.dll</HintPath>
+        <Reference Include="LabApi, Version=1.1.4.0, Culture=neutral, processorArchitecture=Amd64">
+          <HintPath>..\packages\Northwood.LabAPI.1.1.4\lib\net48\LabApi.dll</HintPath>
         </Reference>
         <Reference Include="Mirror">
             <HintPath>$(SL_REFERENCES)\Mirror.dll</HintPath>
