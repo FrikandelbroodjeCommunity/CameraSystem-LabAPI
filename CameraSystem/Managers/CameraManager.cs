@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using CameraSystem.Models;
+using CustomPlayerEffects;
 using Footprinting;
 using Interactables.Interobjects;
 using InventorySystem.Items.Firearms.Attachments;
+using InventorySystem.Items.Usables.Scp1344;
 using LabApi.Features.Wrappers;
 using MEC;
 using Mirror;
@@ -15,6 +17,7 @@ using PlayerStatsSystem;
 using UnityEngine;
 using Utils.NonAllocLINQ;
 using Logger = LabApi.Features.Console.Logger;
+using Scp1344Item = LabApi.Features.Wrappers.Scp1344Item;
 
 namespace CameraSystem.Managers;
 
@@ -45,7 +48,7 @@ internal sealed class CameraManager : IDisposable
 
     internal void Disconnect(Player player, DamageHandlerBase damageHandler = null)
     {
-        if (!TryGetWatcher(player, out var watcher) || watcher.Player.IsOffline)
+        if (!TryGetWatcher(player, out var watcher) || watcher.Player.IsDestroyed)
         {
             return;
         }
@@ -69,11 +72,18 @@ internal sealed class CameraManager : IDisposable
                 }
             }
 
+            if (watcher.PlayerSnapshot.Scp1344Equipped)
+            {
+                var instance = (Scp1344Item)watcher.Player.Items.First(x => x.Type == ItemType.SCP1344);
+                instance.Status = Scp1344Status.Active;
+            }
+
             foreach (var pair in watcher.PlayerSnapshot.Ammo)
             {
                 watcher.Player.SetAmmo(pair.Key, pair.Value);
             }
 
+            watcher.Player.DisableEffect<SpawnProtected>();
             foreach (var kvp in watcher.PlayerSnapshot.ActiveEffects)
             {
                 watcher.Player.EnableEffect(kvp.Key, kvp.Value.Intensity, kvp.Value.Duration);
@@ -135,6 +145,8 @@ internal sealed class CameraManager : IDisposable
         return _watchers.Any(watcher => watcher.Player == player || watcher.Npc == player.ReferenceHub);
     }
 
+    internal bool IsWatcher(Player player) => _watchers.Any(x => x.Player == player);
+
     internal bool TryGetWatcher(Player player, out Watcher watcher)
     {
         watcher = _watchers.Find(w => w.Player == player || w.Npc == player.ReferenceHub);
@@ -188,7 +200,7 @@ internal sealed class CameraManager : IDisposable
             {
                 try
                 {
-                    if (watcher.Player.IsOnline)
+                    if (!watcher.Player.IsDestroyed)
                         Disconnect(watcher.Player);
 
                     if (watcher.Npc is not null && watcher.Npc.IsAlive())

@@ -24,6 +24,7 @@ internal class PlayerSnapshot
     internal Quaternion Rotation { get; }
     internal string Nickname { get; }
     internal int Scp330Uses { get; }
+    internal bool Scp1344Equipped { get; }
 
     internal PlayerSnapshot(Player player)
     {
@@ -47,6 +48,15 @@ internal class PlayerSnapshot
         {
             Scp330Uses = CameraManager.Scp330Interobject.PreviousUses
                 .Count(x => x.LifeIdentifier == player.RoleBase.UniqueLifeIdentifier);
+        }
+
+        foreach (var item in player.Items.Where(x => x.Type == ItemType.SCP1344))
+        {
+            var goggles = (Scp1344Item)item;
+            if (!goggles.IsWorn) continue;
+
+            Scp1344Equipped = true;
+            break;
         }
     }
 }
