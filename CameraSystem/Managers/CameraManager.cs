@@ -127,14 +127,6 @@ internal sealed class CameraManager : IDisposable
         }
     }
 
-    internal void DisconnectAll(DamageHandlerBase damageHandler = null)
-    {
-        foreach (var watcher in _watchers.ToArray())
-        {
-            Disconnect(watcher.Player, damageHandler);
-        }
-    }
-
     internal void Enable() => IsCameraSystemEnabled = true;
 
     internal void Disable()

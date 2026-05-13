@@ -8,12 +8,17 @@ namespace CameraSystem.Configs;
 
 public class Config
 {
+    public bool Debug { get; set; }
+
+    [Description("Whether players using the camera system should be disconnect when SCP-079 is being recontained")]
+    public bool DisconnectOnRecontainment { get; set; } = true;
+
     [Description("Whether the camera system is enabled by default when the plugin loads")]
     public bool IsCameraSystemEnabledByDefault { get; set; } = true;
 
     [Description("Whether to hide the \"Dummy\" badge from the dummies. Might cause issues.")]
     public bool HideBadge { get; set; }
-    
+
     [Description("Preset locations where workstations will be automatically spawned")]
     public PresetConfig[] PresetConfigs { get; set; } =
     {

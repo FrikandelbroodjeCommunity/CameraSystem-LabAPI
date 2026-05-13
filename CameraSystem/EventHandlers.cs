@@ -7,8 +7,10 @@ using LabApi.Events.Arguments.Scp079Events;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
+using MEC;
 using Mirror;
 using PlayerRoles;
+using PlayerStatsSystem;
 using UnityEngine;
 using VoiceChat;
 using Logger = LabApi.Features.Console.Logger;
@@ -191,7 +193,17 @@ internal static class EventHandlers
 
     private static void OnRecontaining(Scp079RecontainingEventArgs ev)
     {
-        CameraManager.Instance.DisconnectAll();
+        if (!CameraManager.Instance.TryGetWatcher(ev.Player, out var watcher))
+        {
+            return;
+        }
+
+        if (CameraSystem.Instance.Config?.DisconnectOnRecontainment ?? true)
+        {
+            CameraManager.Instance.Disconnect(watcher.Player);
+        }
+
+        ev.IsAllowed = false;
     }
 
     private static void OnHurting(PlayerHurtingEventArgs ev)
@@ -245,6 +257,13 @@ internal static class EventHandlers
     {
         if (CameraManager.Instance.IsWatching(ev.Player))
         {
+            if (CameraSystem.Instance.Config?.Debug ?? false)
+            {
+                ev.Player.SendHint(
+                    "\n\n<color=#FAFF86><size=21><b>Cannot open doors from the security camera system.</b></size></color>"
+                    , 7);
+            }
+
             ev.IsAllowed = false;
         }
     }
