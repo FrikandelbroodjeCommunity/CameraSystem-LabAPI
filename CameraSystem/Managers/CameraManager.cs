@@ -5,6 +5,7 @@ using CameraSystem.Models;
 using CustomPlayerEffects;
 using Footprinting;
 using Interactables.Interobjects;
+using InventorySystem.Items.Armor;
 using InventorySystem.Items.Firearms.Attachments;
 using InventorySystem.Items.Usables.Scp1344;
 using LabApi.Features.Wrappers;
@@ -12,6 +13,7 @@ using MEC;
 using Mirror;
 using PlayerRoles;
 using PlayerRoles.FirstPersonControl.Thirdperson.Subcontrollers;
+using PlayerRoles.FirstPersonControl.Thirdperson.Subcontrollers.Wearables;
 using PlayerRoles.PlayableScps.Scp079;
 using PlayerStatsSystem;
 using UnityEngine;
@@ -107,6 +109,11 @@ internal sealed class CameraManager : IDisposable
                 Timing.CallDelayed(Timing.WaitForOneFrame, () => { watcher.Player.Damage(damageHandler); });
             }
 
+            if (watcher.Player.Items.Any(x => x.Category == ItemCategory.Armor))
+            {
+                watcher.Player.ReferenceHub.EnableWearables(WearableElements.Armor);
+            }
+            
             watcher.Player.SendHint(CameraSystem.Instance.Config.Translations.DisconnectionMessage, 7);
         }
         catch (Exception ex)

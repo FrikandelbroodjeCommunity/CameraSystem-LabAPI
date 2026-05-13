@@ -11,6 +11,9 @@ public class Config
     [Description("Whether the camera system is enabled by default when the plugin loads")]
     public bool IsCameraSystemEnabledByDefault { get; set; } = true;
 
+    [Description("Whether to hide the \"Dummy\" badge from the dummies. Might cause issues.")]
+    public bool HideBadge { get; set; }
+    
     [Description("Preset locations where workstations will be automatically spawned")]
     public PresetConfig[] PresetConfigs { get; set; } =
     {

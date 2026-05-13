@@ -27,6 +27,8 @@ internal class PlayerSnapshot
     internal ushort? EquippedItem { get; }
     internal bool Scp1344Equipped { get; }
 
+    internal ItemType? ArmorDisplayType { get; }
+    
     internal PlayerSnapshot(Player player)
     {
         ActiveEffects = player.ActiveEffects.ToDictionary(
@@ -60,5 +62,7 @@ internal class PlayerSnapshot
             Scp1344Equipped = true;
             break;
         }
+
+        ArmorDisplayType = player.Items.FirstOrDefault(x => x.Category == ItemCategory.Armor)?.Type;
     }
 }

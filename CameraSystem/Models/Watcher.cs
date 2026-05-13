@@ -1,4 +1,5 @@
-﻿using LabApi.Features.Wrappers;
+﻿using CameraSystem.Configs;
+using LabApi.Features.Wrappers;
 using MEC;
 using Mirror;
 using NetworkManagerUtils.Dummies;
@@ -13,6 +14,8 @@ internal class Watcher
     internal PlayerSnapshot PlayerSnapshot { get; }
     internal ReferenceHub Npc { get; }
     internal Player NpcPlayer => Player.Get(Npc);
+
+    private static Config Config => CameraSystem.Instance.Config;
 
     internal Watcher(Player player)
     {
@@ -33,22 +36,34 @@ internal class Watcher
     {
         var hub = DummyUtils.SpawnDummy($"{PlayerSnapshot.Nickname} (cams)");
         var npcPlayer = Player.Get(hub);
-        npcPlayer.SetRole(PlayerSnapshot.Role, RoleChangeReason.None, RoleSpawnFlags.None);
-        npcPlayer.Position = PlayerSnapshot.Position + Vector3.up * 0.1f;
-
-        var newCustomInfo = PlayerSnapshot.CustomInfo +
-                            CameraSystem.Instance.Config?.Translations.WatchingCamerasPostfix;
-        if (!string.IsNullOrEmpty(newCustomInfo))
+        Timing.CallDelayed(.1f, () =>
         {
-            npcPlayer.CustomInfo = newCustomInfo;
-        }
+            npcPlayer.SetRole(PlayerSnapshot.Role, RoleChangeReason.None, RoleSpawnFlags.None);
+            npcPlayer.Position = PlayerSnapshot.Position + Vector3.up * 0.1f;
 
-        npcPlayer.Health = PlayerSnapshot.Health;
-        npcPlayer.ArtificialHealth = PlayerSnapshot.ArtificialHealth;
+            var newCustomInfo = PlayerSnapshot.CustomInfo +
+                                CameraSystem.Instance.Config?.Translations.WatchingCamerasPostfix;
+            if (!string.IsNullOrEmpty(newCustomInfo))
+            {
+                npcPlayer.CustomInfo = newCustomInfo;
+            }
 
-        npcPlayer.Rotation = PlayerSnapshot.Rotation;
-        npcPlayer.Scale = PlayerSnapshot.Scale;
-        npcPlayer.InfoArea &= ~PlayerInfoArea.Badge;
+            npcPlayer.Health = PlayerSnapshot.Health;
+            npcPlayer.ArtificialHealth = PlayerSnapshot.ArtificialHealth;
+
+            npcPlayer.Rotation = PlayerSnapshot.Rotation;
+            npcPlayer.Scale = PlayerSnapshot.Scale;
+
+            if (Config.HideBadge)
+            {
+                npcPlayer.InfoArea &= ~PlayerInfoArea.Badge;
+            }
+
+            if (PlayerSnapshot.ArmorDisplayType.HasValue)
+            {
+                npcPlayer.AddItem(PlayerSnapshot.ArmorDisplayType.Value);
+            }
+        });
 
         if (!string.IsNullOrEmpty(PlayerSnapshot.CustomName))
         {
