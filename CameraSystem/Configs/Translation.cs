@@ -75,4 +75,7 @@ public class Translation
 
     [Description("Message shown when camera system is enabled")]
     public string ToggleEnabled { get; set; } = "Camera system has been enabled.";
+
+    public string Rebooting { get; set; } =
+        "\n\n<color=#FAFF86><size=21><b>Camera system is rebooting...</b></size></color>";
 }

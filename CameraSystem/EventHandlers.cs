@@ -4,13 +4,11 @@ using InventorySystem.Items.Firearms.Attachments;
 using LabApi.Events.Arguments.Interfaces;
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.Scp079Events;
-using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using MEC;
 using Mirror;
 using PlayerRoles;
-using PlayerStatsSystem;
 using UnityEngine;
 using VoiceChat;
 using Logger = LabApi.Features.Console.Logger;
@@ -34,6 +32,8 @@ internal static class EventHandlers
     }
 
     private static GameObject _prefab;
+
+    private static bool _disabled;
 
     internal static void Register()
     {
@@ -86,6 +86,8 @@ internal static class EventHandlers
 
     private static void OnWaitingForPlayers()
     {
+        _disabled = false;
+
         if (WorkStationPrefab == null)
         {
             Logger.Error("Failed to find prefab of type WorkstationStructure.");
@@ -146,6 +148,12 @@ internal static class EventHandlers
             return false;
         }
 
+        if (_disabled)
+        {
+            player.SendHint(CameraSystem.Instance.Config.Translations.Rebooting, 7);
+            return false;
+        }
+
         CameraManager.Instance.Connect(player);
         return false;
     }
@@ -193,6 +201,12 @@ internal static class EventHandlers
 
     private static void OnRecontaining(Scp079RecontainingEventArgs ev)
     {
+        if (!_disabled && CameraSystem.Instance.Config.RecontainmentTimeout > 0)
+        {
+            _disabled = true;
+            Timing.CallDelayed(CameraSystem.Instance.Config.RecontainmentTimeout, () => { _disabled = false; });
+        }
+
         if (!CameraManager.Instance.TryGetWatcher(ev.Player, out var watcher))
         {
             return;
@@ -257,13 +271,6 @@ internal static class EventHandlers
     {
         if (CameraManager.Instance.IsWatching(ev.Player))
         {
-            if (CameraSystem.Instance.Config?.Debug ?? false)
-            {
-                ev.Player.SendHint(
-                    "\n\n<color=#FAFF86><size=21><b>Cannot open doors from the security camera system.</b></size></color>"
-                    , 7);
-            }
-
             ev.IsAllowed = false;
         }
     }
