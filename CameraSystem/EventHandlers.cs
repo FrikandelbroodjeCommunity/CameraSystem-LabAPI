@@ -152,7 +152,6 @@ internal static class EventHandlers
             return false;
         }
 
-        Logger.Info($"Here {Disabled}");
         if (Disabled)
         {
             player.SendHint(CameraSystem.Instance.Config.Translations.Rebooting, 7);
