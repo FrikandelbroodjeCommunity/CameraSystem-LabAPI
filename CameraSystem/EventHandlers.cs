@@ -1,14 +1,18 @@
 ﻿using System.Linq;
 using CameraSystem.Managers;
+using CommandSystem.Commands.RemoteAdmin;
 using InventorySystem.Items.Firearms.Attachments;
 using LabApi.Events.Arguments.Interfaces;
+using LabApi.Events.Arguments.ObjectiveEvents;
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.Scp079Events;
+using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using MEC;
 using Mirror;
 using PlayerRoles;
+using PlayerRoles.PlayableScps.Scp079;
 using UnityEngine;
 using VoiceChat;
 using Logger = LabApi.Features.Console.Logger;
@@ -33,7 +37,7 @@ internal static class EventHandlers
 
     private static GameObject _prefab;
 
-    private static bool _disabled;
+    internal static bool Disabled;
 
     internal static void Register()
     {
@@ -86,7 +90,7 @@ internal static class EventHandlers
 
     private static void OnWaitingForPlayers()
     {
-        _disabled = false;
+        Disabled = false;
 
         if (WorkStationPrefab == null)
         {
@@ -148,7 +152,8 @@ internal static class EventHandlers
             return false;
         }
 
-        if (_disabled)
+        Logger.Info($"Here {Disabled}");
+        if (Disabled)
         {
             player.SendHint(CameraSystem.Instance.Config.Translations.Rebooting, 7);
             return false;
@@ -201,12 +206,6 @@ internal static class EventHandlers
 
     private static void OnRecontaining(Scp079RecontainingEventArgs ev)
     {
-        if (!_disabled && CameraSystem.Instance.Config.RecontainmentTimeout > 0)
-        {
-            _disabled = true;
-            Timing.CallDelayed(CameraSystem.Instance.Config.RecontainmentTimeout, () => { _disabled = false; });
-        }
-
         if (!CameraManager.Instance.TryGetWatcher(ev.Player, out var watcher))
         {
             return;
