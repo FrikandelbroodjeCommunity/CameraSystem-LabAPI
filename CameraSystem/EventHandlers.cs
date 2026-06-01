@@ -63,6 +63,8 @@ internal static class EventHandlers
 
         PlayerEvents.ReceivingVoiceMessage += OnReceivingVoiceChat;
         PlayerEvents.SendingVoiceMessage += OnSendingVoiceChat;
+        
+        ServerEvents.RoundEndingConditionsCheck += OnCheckingRoundEndConditions;
     }
 
     internal static void Unregister()
@@ -86,6 +88,8 @@ internal static class EventHandlers
 
         PlayerEvents.ReceivingVoiceMessage -= OnReceivingVoiceChat;
         PlayerEvents.SendingVoiceMessage -= OnSendingVoiceChat;
+        
+        ServerEvents.RoundEndingConditionsCheck -= OnCheckingRoundEndConditions;
     }
 
     private static void OnWaitingForPlayers()
@@ -271,5 +275,27 @@ internal static class EventHandlers
         {
             ev.IsAllowed = false;
         }
+    }
+
+    private static void OnCheckingRoundEndConditions(RoundEndingConditionsCheckEventArgs ev)
+    {
+        if (ev.CanEnd)
+        {
+            return;
+        }
+        
+        var applicablePlayers = Player.List.Where(x => !x.IsHost && !CameraManager.Instance.IsWatcher(x) && x.Faction != Faction.Unclassified).ToArray();
+        if (applicablePlayers.Length == 0)
+        {
+            return;
+        }
+        
+        var aliveFaction = applicablePlayers.First().Faction;
+        if (applicablePlayers.Any(player => player.Faction != aliveFaction))
+        {
+            return;
+        }
+
+        ev.CanEnd = true;
     }
 }

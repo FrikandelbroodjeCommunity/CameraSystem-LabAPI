@@ -63,13 +63,13 @@ internal class Watcher
             {
                 npcPlayer.AddItem(PlayerSnapshot.ArmorDisplayType.Value);
             }
+            
+            if (!string.IsNullOrEmpty(PlayerSnapshot.CustomName))
+            {
+                npcPlayer.DisplayName = $"{PlayerSnapshot.CustomName} (cams)"; 
+            }
         });
-
-        if (!string.IsNullOrEmpty(PlayerSnapshot.CustomName))
-        {
-            Timing.CallDelayed(0.1f, () => { npcPlayer.DisplayName = $"{PlayerSnapshot.CustomName} (cams)"; });
-        }
-
+        
         return hub;
     }
 }
