@@ -11,9 +11,9 @@ public class OverchargePatch
     [HarmonyPrefix]
     public static void OnOvercharge(Scp079Recontainer __instance)
     {
-        if (CameraSystem.Instance.Config.RecontainmentTimeout <= -2) return;
+        if (CameraSystem.Instance.Config.RecontainmentTimeout <= -1) return;
 
-        var delay = CameraSystem.Instance.Config.RecontainmentTimeout == -1
+        var delay = CameraSystem.Instance.Config.RecontainmentTimeout == -2
             ? __instance._lockdownDuration
             : CameraSystem.Instance.Config.RecontainmentTimeout;
 
