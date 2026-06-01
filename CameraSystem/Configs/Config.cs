@@ -11,8 +11,8 @@ public class Config
     [Description("Whether players using the camera system should be disconnect when SCP-079 is being recontained")]
     public bool DisconnectOnRecontainment { get; set; } = true;
 
-    [Description("How long it takes the camera system to reboot after the overcharge. -1 to disable")]
-    public float RecontainmentTimeout { get; set; } = -1;
+    [Description("How long it takes the camera system to reboot after the overcharge in seconds. -1 to be the same as the recontainment blackout, -2 to disable")]
+    public int RecontainmentTimeout { get; set; } = -1;
 
     [Description("Whether the camera system is enabled by default when the plugin loads")]
     public bool IsCameraSystemEnabledByDefault { get; set; } = true;
